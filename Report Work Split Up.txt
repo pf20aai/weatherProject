@@ -1,0 +1,30 @@
+A Comparison of Common Development Strategies (SB)			400
+Project Management Framework and Development Strategy (ALL/SB)		200
+Preferred Approach to Project Management and Development (SB)		500		
+Provisional Project Gantt Chart and Task Schedule (SB)			200
+
+									~1300
+
+
+
+Problem Statement & Project Background (PF)				250
+Client Requirements (ALL/PF)						200
+Business Case - Project Goals & Benefits (ALL/PF)			350
+Target Platform (PF)							150
+Project’s Functional Requirements (ALL / PF)				~120
+
+									~1100
+
+
+
+General Aims & Objectives (CD)						~200
+Development and Testing Platform (ALL / CD)				200
+Project Risks (ALL / CD)						200
+Team Members & Team Roles (CD)						~50
+Software and Project Management Team Skills Matrix (CD)			~100
+Project Collaboration and Sharing (CD)					80
+Link to Online Repository (CD)						~20
+Existing System Use-Cases (ALL/CD)					80
+Project’s Non-Functional Requirements (ALL / CD)			~120
+
+									~1150
