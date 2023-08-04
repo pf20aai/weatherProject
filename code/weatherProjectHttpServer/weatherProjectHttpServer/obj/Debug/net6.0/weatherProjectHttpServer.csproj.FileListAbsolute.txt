@@ -1,0 +1,15 @@
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\bin\Debug\net6.0\weatherProjectHttpServer.exe
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\bin\Debug\net6.0\weatherProjectHttpServer.deps.json
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\bin\Debug\net6.0\weatherProjectHttpServer.runtimeconfig.json
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\bin\Debug\net6.0\weatherProjectHttpServer.dll
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\bin\Debug\net6.0\weatherProjectHttpServer.pdb
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\obj\Debug\net6.0\weatherProjectHttpServer.csproj.AssemblyReference.cache
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\obj\Debug\net6.0\weatherProjectHttpServer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\obj\Debug\net6.0\weatherProjectHttpServer.AssemblyInfoInputs.cache
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\obj\Debug\net6.0\weatherProjectHttpServer.AssemblyInfo.cs
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\obj\Debug\net6.0\weatherProjectHttpServer.csproj.CoreCompileInputs.cache
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\obj\Debug\net6.0\weatherProjectHttpServer.dll
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\obj\Debug\net6.0\refint\weatherProjectHttpServer.dll
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\obj\Debug\net6.0\weatherProjectHttpServer.pdb
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\obj\Debug\net6.0\weatherProjectHttpServer.genruntimeconfig.cache
+C:\Dev\git\weatherProject\weatherProjectHttpServer\weatherProjectHttpServer\obj\Debug\net6.0\ref\weatherProjectHttpServer.dll
