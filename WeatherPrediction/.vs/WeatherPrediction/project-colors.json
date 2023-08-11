@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "8ef5e958-4018-4ba5-8d6a-e22465a05ac7": {
+      "ProjectGuid": "8ef5e958-4018-4ba5-8d6a-e22465a05ac7",
+      "DisplayName": "WeatherPrediction",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
