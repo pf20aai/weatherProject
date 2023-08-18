@@ -12,15 +12,19 @@ namespace WeatherPrediction
         //Class Attributes
         private SqliteConnection weatherSQLConnection;
         private string weatherTable = "WeatherTable";
+        private int weatherTableNumberOfColumns = 7; //This is the number of columns in the table Starting from 0
         private string userTable = "UserTable";
+        private int userTableNumberOfColumns = 2;   //This is the number of columns in the table Starting from 0
+        private bool tablesPreInitialised = false;
 
         //Constructor
         public DatabaseInterface()
         {
             weatherSQLConnection = CreateConnection();
-            CreateInitialTables(weatherSQLConnection);
+            tablesPreInitialised = CreateInitialTables(weatherSQLConnection);
             InsertTestData(weatherSQLConnection);
             Console.WriteLine("Database Setup");
+            ReadSingleUserDataFromDatabase("TestAdmin1");
         }
 
         //Database Functions
@@ -52,52 +56,205 @@ namespace WeatherPrediction
             return sqlite_conn;
         }
 
-        //SB: This will need to have an agreed format whenever data is being entered into the database so that it can be standardised 
-        public bool AddUserDataToDatabase(string userName, string email, string password, int permissions)
+        /// <summary>
+        /// This adds a new user into the database with their permissions and password
+        /// The Function will check the user does not already exists before adding anew set into the database
+        /// The Function will return a true/false back to say whether the command was completed successfully
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <param name="permissions"></param>
+        /// <returns></returns>
+        public bool AddUserDataToDatabase(string userName, string password, int permissions)
         {
+            bool commandSuccessful;
+
+            try
+            {
+                //We will need to check if the user already exists first before we add it in
+                //If a user did alread exist we need to report back a failure
+                List<string> userData= findUser(userName);
+                if (userData.Count == 0)
+                {
+                    SqliteCommand sqlite_cmd;
+                    sqlite_cmd = weatherSQLConnection.CreateCommand();
+                    sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Password, Permission) VALUES(" + userName + "," + password + "," + permissions + "); ";
+                    sqlite_cmd.ExecuteNonQuery();
+                    commandSuccessful = true;
+                }
+                else
+                {
+                    Console.WriteLine("Failed To Execute Add User Command: User Alread Exists");
+                    commandSuccessful = false;
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Failed To Execute Add User Command: SQL Failure");
+                commandSuccessful = false;
+            }
+
+            return commandSuccessful;
+        }
+ 
+
+        /// <summary>
+        /// This function adds a new set of weather data into the database
+        /// The function will convert the enums into ints before they are passed to the database as the database can only hold basic types of data
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="temperature"></param>
+        /// <param name="pressure"></param>
+        /// <param name="humidity"></param>
+        /// <param name="windSpeed"></param>
+        /// <param name="date"></param>
+        /// <param name="county"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public bool AddWeatherDataToDatabase(string userName, double temperature, double pressure, int humidity, double windSpeed, int date, Counties county, WeatherConditions condition)
+        {
+
+            bool commandSuccessful;
+
+            try
+            {
+                int countyInt = ((int)county);          //We convert the Enum to an Int because we can only store simple data types in the database
+                int conditionInt = ((int)condition);    //We convert the Enum to an Int because we can only store simple data types in the database
+                SqliteCommand sqlite_cmd;
+                sqlite_cmd = weatherSQLConnection.CreateCommand();
+                sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES(" + userName + "," + temperature + "," + pressure + "," + humidity + "," + windSpeed + "," + date + "," + countyInt + "," + conditionInt + "); ";
+                sqlite_cmd.ExecuteNonQuery();
+                commandSuccessful = true;
+            }
+            catch
+            {
+                Console.WriteLine("Failed To Execute Add Weather Data Command: SQL Failure");
+                commandSuccessful = false;
+            }
+
+            return commandSuccessful;
+        }
+
+        public bool UpdateUserDataToDatabase(string userName, string password, int permissions)
+        {
+            bool commandSuccessful;
             try
             {
                 SqliteCommand sqlite_cmd;
                 sqlite_cmd = weatherSQLConnection.CreateCommand();
-                sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Email, Password, Permission) VALUES(" + userName + "," + email + "," + password + "," + permissions +"); ";
+                sqlite_cmd.CommandText = "UPDATE " + userTable + " SET Username = '" + userName + "', Password = '" + password + "', Permission = " + permissions + " WHERE Username = '" + userName + "';"; ;
                 sqlite_cmd.ExecuteNonQuery();
-                return true;
+                commandSuccessful = true;
             }
             catch
             {
-                return false;
+                commandSuccessful = false;
+                Console.WriteLine("Failed To Execute Update User Data Command: SQL Failure");
             }
+            return commandSuccessful;
         }
 
-        //SB: This will need to have an agreed format whenever data is being entered into the database so that it can be standardised 
-        public bool AddWeatherDataToDatabase(string userName, string email, string password, int permissions)
+        public bool UpdateWeatherDataToDatabase(string userName, double temperature, double pressure, int humidity, double windSpeed, int date, Counties county, WeatherConditions condition)
         {
+            bool commandSuccessful;
             try
             {
+                int countyInt = ((int)county);          //We convert the Enum to an Int because we can only store simple data types in the database
+                int conditionInt = ((int)condition);    //We convert the Enum to an Int because we can only store simple data types in the database
                 SqliteCommand sqlite_cmd;
                 sqlite_cmd = weatherSQLConnection.CreateCommand();
-                sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Email, Password, Permission) VALUES(" + userName + "," + email + "," + password + "," + permissions + "); ";
+                string slqcommandtext = "UPDATE " + weatherTable + " SET Reporter = '" + userName + "', Temperature = " + temperature + ", Pressure = " + pressure + ", Humidity = " + humidity + ", Windspeed = " + windSpeed + ", Date = " + date + ", County = " + countyInt + ", Condition = " + conditionInt + " WHERE Reporter = '" + userName + "' AND Date = " + date + "; ";
+                sqlite_cmd.CommandText = slqcommandtext;
                 sqlite_cmd.ExecuteNonQuery();
-                return true;
+                commandSuccessful = true;
             }
             catch
             {
-                return false;
+                commandSuccessful = false;
+                Console.WriteLine("Failed To Execute Update User Data Command: SQL Failure");
             }
+            return commandSuccessful;
         }
 
-        public string ReadUserDataFromDatabase(string username, string password)
+        //SB: NOT COMPLETE
+        public UserData ReadSingleUserDataFromDatabase(string username)
+        {
+            UserData userData = new UserData();
+            List<string> theData = new List<string>();
+            theData = findUser(username);
+
+            userData.userName = theData[0];
+            userData.password = theData[1];
+            userData.permissions = int.Parse(theData[2]);
+            return userData;
+
+        }
+
+        //SB: NOT COMPLETE
+        public string ReadAllUserDataFromDatabase()
         {
             return "";
 
         }
 
-        public string[] ReadWeatherDataSetFromDatabase(string county)
+        //SB: NOT COMPLETE
+        public string ReadWeatherDataSetFromDatabase(string county)
         {
+            return "";
+        }
 
-            //SB: This will probably be better as a list as we will not know the actual size of the data that is being sent back
-            string[] dataSet = new string[1];
-            return dataSet;
+        //SB: NOT COMPLETE
+        public bool RemoveUserDataFromDatabase(string userName)
+        {
+            bool commandSuccessful;
+
+            commandSuccessful = true;
+
+            return commandSuccessful;
+        }
+
+        //SB: NOT COMPLETE
+        public bool RemoveWeatherDataFromDatabase(string userName, int date)
+        {
+            bool commandSuccessful;
+
+            commandSuccessful = true;
+
+            return commandSuccessful;
+        }
+
+        /// <summary>
+        /// This function will find a user in the table and return the data for that type
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        private List<string> findUser(string theUserName)
+        {
+            List<string> userData = new List<string>();
+            string findUserCommand = "SELECT *" + " FROM " + userTable + " WHERE userName = '" + theUserName + "';";
+            SqliteCommand sqlite_cmd;
+            sqlite_cmd = weatherSQLConnection.CreateCommand();
+            sqlite_cmd.CommandText = findUserCommand;
+            SqliteDataReader sqliteDataReader = sqlite_cmd.ExecuteReader();
+            while (sqliteDataReader.Read())
+            {
+                int column = 0;
+                while (column <= userTableNumberOfColumns)
+                {
+                    userData.Add(sqliteDataReader.GetString(column));
+                    column++;
+                }
+            }
+            sqliteDataReader.Close();
+
+            Console.WriteLine("User Data Size Is: " + userData.Count);
+
+            foreach (string nextValue in userData)
+            {
+                Console.WriteLine("User Data For " + theUserName + " is: " + nextValue);
+            }
+
+            return userData;
         }
 
         /// <summary>
@@ -106,34 +263,73 @@ namespace WeatherPrediction
         /// Then creates a Second Identical Table with a differnet name
         /// </summary>
         /// <param name="conn"></param>
-        private void CreateInitialTables(SqliteConnection connection)
+        private bool CreateInitialTables(SqliteConnection connection)
         {
-
+            //First We Check That The Tables Don't Already Exist
+            bool weatherTableInitialised = false;
+            bool userTableInitialised = false;
+            List<string> databaseTables = new List<string>();
+            string findTableCommand = "SELECT name FROM sqlite_schema WHERE type='table'";
             SqliteCommand sqlite_cmd;
-            // Column 1: Reporter Id    (String)
-            // Column 2: Temperature    (Double)
-            // Column 3: Pressure       (Double)
-            // Column 4: Humidity       (Int)
-            // Column 5: Windspeed      (Double)
-            // Column 6: Date           (Int)
-            // Column 7: County         (String)
-            // Column 8: Condition      (String)(Enum)
-            string weatherTableCommand = "CREATE TABLE " + weatherTable + "(Reporter TEXT, Temperature REAL, Pressure REAL, Humidity INT, Windspeed REAL, Date DATE, County TEXT, Condition TEXT )";
-
-            // Column 1: Unsername      (String)
-            // Column 2: Email          (String)
-            // Column 3: Password       (String)
-            // Column 4: Permission     (Int)
-            string userTableCommand = "CREATE TABLE "+ userTable + "(Username TEXT, Email TEXT, Password TEXT, Permission INT)";
-
             sqlite_cmd = connection.CreateCommand();
+            sqlite_cmd.CommandText = findTableCommand;
+            SqliteDataReader sqliteDataReader = sqlite_cmd.ExecuteReader();
+            while (sqliteDataReader.Read())
+            {
+                databaseTables.Add(sqliteDataReader.GetString(0));
+            }
+            sqliteDataReader.Close();
 
-            sqlite_cmd.CommandText = weatherTableCommand;
-            sqlite_cmd.ExecuteNonQuery();
+            if (!databaseTables.Contains("WeatherTable"))
+            {
+                Console.WriteLine("Weather Table Does Not Exist Creating Table");
 
-            sqlite_cmd.CommandText = userTableCommand;
-            sqlite_cmd.ExecuteNonQuery();
+                // Column 1: Reporter Id    (String)
+                // Column 2: Temperature    (Double)
+                // Column 3: Pressure       (Double)
+                // Column 4: Humidity       (Int)
+                // Column 5: Windspeed      (Double)
+                // Column 6: Date           (Int)
+                // Column 7: County         (String)
+                // Column 8: Condition      (String)(Enum)
+                string weatherTableCommand = "CREATE TABLE " + weatherTable + "(Reporter TEXT, Temperature REAL, Pressure REAL, Humidity INT, Windspeed REAL, Date DATE, County TEXT, Condition TEXT )";
 
+                sqlite_cmd.CommandText = weatherTableCommand;
+                sqlite_cmd.ExecuteNonQuery();
+
+
+            }
+            else
+            {
+                weatherTableInitialised = true;
+            }
+
+            if (!databaseTables.Contains("UserTable"))
+            {
+                Console.WriteLine("User Table Does Not Exist Creating Table");
+
+                // Column 1: Unsername      (String)
+                // Column 2: Password       (String)
+                // Column 3: Permission     (Int)
+                string userTableCommand = "CREATE TABLE " + userTable + "(Username TEXT, Password TEXT, Permission INT)";
+
+                sqlite_cmd.CommandText = userTableCommand;
+                sqlite_cmd.ExecuteNonQuery();
+
+            }
+            else
+            {
+                userTableInitialised = true;
+            }
+            Console.WriteLine("Database Tables Initialised");
+            if (weatherTableInitialised && userTableInitialised)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -142,34 +338,52 @@ namespace WeatherPrediction
         /// <param name="conn"></param>
         private void InsertTestData(SqliteConnection conn)
         {
-            //This is a Skeleton Line for adding new Weather Data To The Table
-            //sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('Test User', 21.1, 1002.1, 76, 5.3, 1691743250, 'Essex', 'Cloudy'); ";
-            //sqlite_cmd.ExecuteNonQuery();
+            if (!tablesPreInitialised)
+            {
+                //This is a Skeleton Line for adding new Weather Data To The Table
+                //sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('TestAdmin1', 21.1, 1002.1, 76, 5.3, 1691743250, 'Essex', 'Cloudy'); ";
+                //sqlite_cmd.ExecuteNonQuery();
 
-            //This is a Skeleton Line for adding new User Data To The Table
-            //sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Email, Password, Permission) VALUES('TestUser', 'Test@Test.com' , 'Password1', 1); ";
-            //sqlite_cmd.ExecuteNonQuery();
+                //This is a Skeleton Line for adding new User Data To The Table
+                //sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Password, Permission) VALUES('TestUser' , 'Password1', 0); ";
+                //sqlite_cmd.ExecuteNonQuery();
 
-            SqliteCommand sqlite_cmd;
-            sqlite_cmd = conn.CreateCommand();
-            sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('Test User', 21.1, 1002.1, 74, 5.3, 1691743250, 'Essex', 'Sunny'); ";
-            sqlite_cmd.ExecuteNonQuery();
-            sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('Test User', 20.5, 1002.4, 76, 5.3, 1691742500, 'Essex', 'Sunny'); ";
-            sqlite_cmd.ExecuteNonQuery();
-            sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('Test User', 20.1, 1001.1, 79, 5.3, 1691742000, 'Essex', 'Cloudy'); ";
-            sqlite_cmd.ExecuteNonQuery();
-            sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Email, Password, Permission) VALUES('TestAdmin', 'TestAdmin@Test.com' , 'Admin', 1); ";
-            sqlite_cmd.ExecuteNonQuery();
-            sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Email, Password, Permission) VALUES('TestUser', 'Test@Test.com' , 'Password1', 0); ";
-            sqlite_cmd.ExecuteNonQuery();
+                SqliteCommand sqlite_cmd;
+                sqlite_cmd = conn.CreateCommand();
+                sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('TestAdmin1', 21.1, 1002.1, 74, 5.1, 1691743250, '12', '0'); ";
+                sqlite_cmd.ExecuteNonQuery();
+                sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('TestAdmin1', 20.5, 1002.4, 76, 5.3, 1691742500, '12', '0'); ";
+                sqlite_cmd.ExecuteNonQuery();
+                sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('TestAdmin1', 20.1, 1001.1, 79, 5.2, 1691742000, '12', '1'); ";
+                sqlite_cmd.ExecuteNonQuery();
+                sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('TestAdmin2', 21.0, 1002.1, 74, 5.3, 1691743250, '12', '0'); ";
+                sqlite_cmd.ExecuteNonQuery();
+                sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('TestAdmin2', 20.4, 1001.1, 69, 5.0, 1691743290, '12', '1'); ";
+                sqlite_cmd.ExecuteNonQuery();
+                sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('TestAdmin2', 20.6, 1001.3, 72, 5.1, 1691743350, '12', '2'); ";
+                sqlite_cmd.ExecuteNonQuery();
+                sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('TestAdmin2', 20.8, 1001.2, 74, 4.9, 1691743399, '12', '0'); ";
+                sqlite_cmd.ExecuteNonQuery();
+                sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Password, Permission) VALUES('TestAdmin1' , 'Admin12', 1); ";
+                sqlite_cmd.ExecuteNonQuery();
+                sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Password, Permission) VALUES('TestAdmin2' , 'IBeAdmin', 1); ";
+                sqlite_cmd.ExecuteNonQuery();
+                sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Password, Permission) VALUES('TestUser' , 'Password1', 0); ";
+                sqlite_cmd.ExecuteNonQuery();
+            }
+            else
+            {
+                Console.WriteLine("Tables Were Preinitialised Test Data Already In Place");
+            }
 
         }
 
         /// <summary>
         /// This function reads out all of the data in the database
+        /// This is only going to be used for test purposes
         /// </summary>
         /// <param name="conn"></param>
-        private void ReadData(SqliteConnection conn , String table)
+        private void ReadData(SqliteConnection conn, String table)
         {
             SqliteDataReader sqlite_datareader;
             SqliteCommand sqlite_cmd;
