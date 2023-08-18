@@ -7,7 +7,9 @@ using WeatherPrediction;
 Console.WriteLine("Beginning Program!");
 
 //SB: Remove this line to Not Create the Database
-DatabaseInterface databaseInterface = new DatabaseInterface();
+//DatabaseInterface databaseInterface = new DatabaseInterface();
+WebServer webServer = new WebServer();
+webServer.Main();
 
 while (true)
 {
