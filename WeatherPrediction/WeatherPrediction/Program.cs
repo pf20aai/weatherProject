@@ -9,8 +9,8 @@ Console.WriteLine("Beginning Program!");
 
 //SB: Remove this line to Not Create the Database
 DatabaseInterface databaseInterface = new DatabaseInterface();
-//WebServer webServer = new WebServer();
-//webServer.Main();
+WebServer webServer = new WebServer();
+webServer.Main();
 
 //webserver.XXXXXXXXX += HandleAddUserRequest;
 //webserver.XXXXXXXXX += HandleAddWeatherDataRequest;

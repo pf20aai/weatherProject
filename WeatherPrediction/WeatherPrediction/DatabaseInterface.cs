@@ -24,7 +24,6 @@ namespace WeatherPrediction
             tablesPreInitialised = CreateInitialTables(weatherSQLConnection);
             InsertTestData(weatherSQLConnection);
             Console.WriteLine("Database Setup");
-            ReadSingleUserDataFromDatabase("TestAdmin1");
         }
 
         //Database Functions
