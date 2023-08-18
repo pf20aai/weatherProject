@@ -1,0 +1,131 @@
+<!-- Sign Up Confirmation Page -->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale 1.0">
+
+<!-- Sign Up Confirmation Page Title -->	
+	<title>
+		Confirmation
+	</title>
+
+<style>
+	
+body{
+	font-family: 'Trebuchet MS', sans-serif;  /* Makes all content in this font */
+}
+
+/* Margins for the whole page to make it more mobile friendly*/
+.page {
+	margin:0 auto;
+	width:960px;
+}
+
+/* Menu Image */
+.menu-image{
+	background-image: url("Banner.fw.png");
+	min-height: 280px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	position: relative;
+}
+
+.menu-container{
+	position: absolute;
+	margin: 20px;
+	width: auto;
+}
+
+/* Background colour for Nav bar */
+.navbar {
+  background-color: #333; /* Nav bar colour */
+  overflow: hidden;
+}
+/* Styles for the links */
+.navbar a {
+  float: left;
+  color: white; /*Text colour for page links*/
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px; 
+}
+
+/* When a user hovers their cursor over the button */
+.navbar a:hover{
+	background-color:#FFBB00; /*Hover background colour*/
+	color: #56595B; /* Hover text colour */
+}
+
+/*Colours for currently selected page */
+.navbar a.active {
+	background-color:#63CDEB; /*Colour for active page */
+	color: black; /* Text colour when active page */
+}
+
+/* To put the sign up/login button on the right of the page */
+.navbar-right {
+	float: right;
+}
+
+p.confirm{
+	font-size: 30px;
+	font-weight: bold;
+	text-align: center;
+	background-color: #63CDEB;
+	padding: 20px;
+	margin: 20px auto;
+	border-radius: 10px;
+	outline-color:#FFBB00;
+	outline-style: outset;
+}
+
+.continue {
+  background-color: #FFBB00;
+  color: black;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+  border-style: outset;
+  	padding: 14px 20px;
+	background-color: #FFBB00;
+}
+}
+
+/* style changes for mobile devices */ 
+@media screen and (max-width 350px) {
+	span.sign-in {
+		display:block;
+		float: none;
+	}
+
+
+</style>
+</head>
+
+
+<!-- Start of displayed content -->
+<body style="background-color:#C1F2FF;"> <!-- Page background colour -->
+
+<!-- Makes the page centered and shorter -->
+<div class="page">
+
+<div class="menu-image">	
+		<div class="navbar"> 
+		  <a  href="Home Page.html">Home</a> <!-- Home Page Button/Link -->
+		   </div>
+</div>
+
+
+<p class="confirm"> Thank you for creating an account<br>Click Continue to login</p>
+
+<a href="Login.html">
+	<button type="button" class="continue">Continue</button>
+	</a>
+</div>
+</body>
+</html>

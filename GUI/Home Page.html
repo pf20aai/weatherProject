@@ -1,0 +1,152 @@
+<!-- Home Page -->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale 1.0">
+
+<!-- Home Page Title -->	
+	<title>
+		Home
+	</title>
+
+<style>
+
+body{
+	font-family: 'Trebuchet MS', sans-serif;  /* Makes all content in this font */
+}
+
+/* Margins for the whole page to make it more mobile friendly */
+.page {
+	margin:0 auto;
+	width:960px;
+}
+
+/* Menu Image */
+.menu-image{
+	background-image: url("Banner.fw.png");
+	min-height: 280px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	position: relative;
+	}
+
+.menu-container{
+	position: absolute;
+	margin: 20px;
+	width: auto;
+}
+
+/* Background colour for Nav bar */
+.navbar {
+  background-color: #333; /* Nav bar colour */
+  overflow: hidden;
+}
+/* Styles for the links */
+.navbar a {
+  float: left;
+  color: white; /*Text colour for page links*/
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px; 
+}
+
+.navbar a:hover{
+	background-color:#FFBB00; /*Hover background colour*/
+	color: #56595B; /* Hover text colour */
+}
+
+/*Colours for currently selected page */
+.navbar a.active {
+	background-color:#63CDEB; /*Colour for active page */
+	color: black; /* Text colour when active page */
+}
+
+
+.navbar-right {
+	float: right;
+}
+
+
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.topnav-right {
+  float: right;
+}
+
+/* Style settings for Site title */
+
+.title { 
+	text-align: center;
+	margin:90px;
+	font-size: 50px;
+}
+
+/* Style settings for directions paragraph*/
+
+p.directions{
+	font-size: 30px;
+	font-weight: bold;
+	text-align: center;
+	background-color: #63CDEB;
+	padding: 20px;
+	margin: 20px auto;
+	border-radius: 10px;
+	outline-color:#FFBB00;
+	outline-style: outset;
+}
+
+/* style changes for mobile devices */ 
+@media screen and (max-width 350px) {
+	span.sign-in {
+		display:block;
+		float: none;
+	}
+</style>
+</head>
+
+
+<!-- Start of displayed content -->
+<body style="background-color:#C1F2FF;"> <!-- Page background colour -->
+
+<!-- Makes the page centered and shorter -->
+<div class="page">
+<!-- Navigation Bar at top of the site -->
+<div class="menu-image">
+		<div class="navbar"> 
+		  <a class="active" href="Home Page.html">Home</a> <!-- Home Page Button/Link -->
+		  <div class="topnav-right">
+		      <a href="Login.html">Sign Up/Log in</a><!-- Signup/Login Page Button/Link -->
+		  </div>
+  </div>
+  <div class="title"> Welcome to the Weather Prediction System</div>
+</div>
+
+<!-- Welcome message and description on what to do -->
+<p class="directions"> The purpose of this site is to get an instant weather forecast based on the current weather conditions you are experiencing.<br> <br> Please log in or create an account to get started </p>
+</div>
+</body>
+</html>
