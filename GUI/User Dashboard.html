@@ -1,0 +1,137 @@
+<!-- User Dashboard Page -->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale 1.0">
+
+<!-- Dashboard Page Title -->	
+	<title>
+		Dashbaord
+	</title>
+
+<style>
+	
+body{
+	font-family: 'Trebuchet MS', sans-serif;  /* Makes all content in this font */
+}
+
+/* Margins for the whole page to make it more mobile friendly */
+.page {
+	margin:0 auto;
+	width:960px;
+}
+
+/* Menu Image */
+.menu-image{
+	background-image: url("Banner.fw.png");
+	min-height: 280px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	position: relative;
+}
+
+.menu-container{
+	position: absolute;
+	margin: 20px;
+	width: auto;
+}
+
+/* Background colour for Nav bar */
+.navbar {
+  background-color: #333; /* Nav bar colour */
+  overflow: hidden;
+}
+/* Styles for the links */
+.navbar a {
+  float: left;
+  color: white; /*Text colour for page links*/
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px; 
+}
+
+/* When a user hovers their cursor over the button */
+.navbar a:hover{
+	background-color:#FFBB00; /*Hover background colour*/
+	color: #56595B; /* Hover text colour */
+}
+
+/*Colours for currently selected page */
+.navbar a.active {
+	background-color:#63CDEB; /*Colour for active page */
+	color: black; /* Text colour when active page */
+}
+
+/* To put the sign up/login button on the right of the page */
+.navbar-right {
+	float: right;
+}
+
+.title { 
+	text-align: center;
+	margin:90px;
+	font-size: 50px;
+}
+
+/* Configures the images to be side by side */
+.image-column { 
+	float: left;
+	width: 33.33%;
+	padding: 5px;
+ }
+
+/* Clearfix the images */
+.image-row::after {
+	content:"";
+	clear: both;
+	display: table;
+}
+
+
+/* style changes for mobile devices */ 
+@media screen and (max-width 350px) {
+	span.sign-in {
+		display:block;
+		float: none;
+	}
+
+
+
+</style>
+</head>
+
+
+<!-- Start of displayed content -->
+<body style="background-color:#C1F2FF;"> <!-- Page background colour -->
+
+<!-- Makes the page centered and shorter -->
+<div class="page">
+
+<div class="menu-image">	
+		<div class="navbar"> 
+		  <a class="active" href="User Dashboard.html">Dashboard</a> <!-- User Dashboard Home Page Button/Link -->
+		  <a href="Weather Input.html">Input Data</a>
+		  <a href="Historic Data.html">History</a>
+		  <div class="navbar-right">
+		  	<a href="WIP.html">My Account</a><!-- Future update, add edit options to a user's profile -->
+		      <a href="Home Page.html">Logout</a><!-- Home Button/Link -->
+		  </div>
+  </div>
+  <div class="title">Dashboard</div> 
+</div>
+
+<div class="image-row">
+	<!-- Takes user to page where they can input their current weather data -->
+	<div class="image-column">
+		<a href="Weather Input.html"><img src="Weather Data Icon.fw.png" alt="Input Weather Data" style="width: 100%;"></a>
+	</div>
+	<!-- Takes user to a page where they can view their past weather data entires -->
+	<div class="image-column">
+		<a href="Historic Data.html"><img src="Historic Data Icon.fw.png" alt="View Past Weather Entires" style="width: 100%";></a> 
+	</div>
+</div>
+</div>
+</body>
+</html>
