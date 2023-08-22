@@ -80,4 +80,15 @@ namespace WeatherPrediction
         User,
         Admin
     }
+
+    public enum requestTypes
+    {
+        None,
+        GetWeatherData,
+        PostLogin,
+        PostSignUp,
+        PostPredict,
+        PostWeatherData,
+        PutWeatherData
+    }
 }

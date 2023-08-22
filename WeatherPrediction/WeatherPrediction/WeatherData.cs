@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,18 @@ namespace WeatherPrediction
             date = theDate;
             county = theCounty;
             WeatherCondition = theCondition;
+        }
+        public WeatherData()
+        {
+            reporterId = "";
+            temperature = 0.0;
+            pressure = 0.0;
+            humidity = 0;
+            windSpeed = 0.0;
+            date = 0;
+            county = Counties.Hertfordshire;
+            WeatherCondition = WeatherConditions.PartiallyCloudy;
+
         }
     }
 }

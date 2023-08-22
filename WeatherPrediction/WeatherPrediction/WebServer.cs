@@ -1,17 +1,98 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace WeatherPrediction
 {
     public class WebServer
     {
-        static void SendHttpResponse(HttpListenerContext context, int statusCode, string data = "")
+        // attributes
+
+        private bool runningCommand = false;
+        private HttpListenerContext context = null;
+        private requestTypes lastRequest = requestTypes.None;
+        private bool isAuthenticated = false;
+        private bool isAdmin = false;
+
+
+        //events
+
+        public event EventHandler<UserData> AddUserEvent;
+
+        public event EventHandler<WeatherData> AddWeatherDataEvent;
+
+        public event EventHandler<WeatherData> PredictWeatherEvent;
+        
+        public event EventHandler<WeatherData> UpdateWeatherDataEvent;
+
+        public event EventHandler<UserData> UpdateUserDataEvent;
+
+        public event EventHandler<UserData> LoginUserEvent;
+
+        // methods
+
+        // Event methods
+        public void AuthenticateUser(AuthenticationData authenticationData)
         {
-            using HttpListenerResponse resp = context.Response;
+            if (!authenticationData.isAuthenticated)
+            {
+                SendHttpResponse((int)HttpStatusCode.Unauthorized);
+            }
+            else 
+            {
+                this.isAuthenticated = authenticationData.isAuthenticated;
+                this.isAdmin = authenticationData.isAdmin;
+                SendHttpResponse((int)HttpStatusCode.Accepted);
+            }
+            StoppingCommand();
+
+        }
+
+        public void DoneNoData(bool isDone)
+        {
+            if (isDone)
+            {
+                SendHttpResponse((int)HttpStatusCode.OK);
+            }
+            else 
+            { 
+                SendHttpResponse((int)HttpStatusCode.BadRequest);
+            }
+
+            StoppingCommand();
+        }
+
+        public void returnPrediction(WeatherData weatherData)
+        {
+            string prediction = FormatWeatherDataIntoHtmlString(weatherData);
+
+            SendHttpResponse((int)HttpStatusCode.OK, prediction);
+            StoppingCommand();
+        }
+
+        // Webserver methods
+        void StartingCommand(requestTypes requestType)
+        {
+            Console.WriteLine("2");
+            this.lastRequest = requestType;
+            this.runningCommand = true;
+        }
+
+        void StoppingCommand()
+        {
+            this.lastRequest = requestTypes.None; 
+            this.runningCommand = false;
+        }
+
+        void SendHttpResponse(int statusCode, string data = "")
+        {
+            using HttpListenerResponse resp = this.context.Response;
             resp.Headers.Set("Content-Type", "text/plain");
 
             resp.StatusCode = statusCode;
@@ -24,10 +105,10 @@ namespace WeatherPrediction
             resp.Close();
         }
 
-        static void SendNotFoundResponse(HttpListenerContext context)
+        void SendNotFoundResponse()
         {
             Console.WriteLine("Unknown path");
-            SendHttpResponse(context, (int)HttpStatusCode.NotFound, "Not Found");
+            SendHttpResponse((int)HttpStatusCode.NotFound, "Not Found");
         }
 
         static string GetRequestData(HttpListenerRequest req)
@@ -42,47 +123,6 @@ namespace WeatherPrediction
 
 
             return (requestData);
-        }
-
-        static bool AttemptLogin(string details)
-        {
-            if (details == "secretTunnel")
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        static string SignUpUser(string data)
-        {
-            if (data == "fight")
-            {
-                return ("conflict");
-            }
-            else
-            {
-                return ("123456789");
-            }
-        }
-
-        static string GeneratePrediction(string data)
-        {
-            string prediction = "IDK cloudy I guess?";
-
-            return (prediction);
-        }
-
-        static void SendDataToDatabase(string data)
-        {
-            Console.WriteLine($"Sending data to database\n{data}");
-        }
-
-        static void UpdateDataInDatabase(string data, string entryId)
-        {
-            Console.WriteLine($"Updating data for entry {entryId} in database\n{data}");
         }
 
         static string RetrieveWeatherData(string county = "")
@@ -112,6 +152,172 @@ namespace WeatherPrediction
             }
         }
 
+        static string FormatWeatherDataIntoHtmlString(WeatherData weatherData)
+        {
+            string weatherDataString = "";
+
+            weatherDataString += $"\nEstimated temperature: {weatherData.temperature}";
+            weatherDataString += $"\nEstimated pressure: {weatherData.pressure}";
+            weatherDataString += $"\nEstimated humidity: {weatherData.humidity}";
+            weatherDataString += $"\nEstimated wind speed: {weatherData.windSpeed}";
+            weatherDataString += $"\nEstimated conditions: {weatherData.WeatherCondition}";
+
+            return weatherDataString;
+        }
+
+        static List<List<string>> SeperateHtmlReponseIntoKeyPairs(string data)
+        {
+            List<List<string>> seperatedKeyPairs = new List<List<string>>();
+            List<string> valueKeyPairs = data.Split("&").ToList();
+
+            foreach (string keyPair in valueKeyPairs)
+            {
+                seperatedKeyPairs.Add(keyPair.Split("=").ToList());
+            }
+
+            return seperatedKeyPairs;
+        }
+
+        static WeatherData SeperateHtmlIntoWeatherData(string data)
+        {
+            WeatherData weatherData = new WeatherData();
+            List<List<string>> keyPairs = SeperateHtmlReponseIntoKeyPairs(data);
+
+            foreach (List<string> keyPair in keyPairs)
+            {
+                if (keyPair.Contains("reporterId"))
+                {
+                    keyPair.Remove("reporterId");
+                    weatherData.reporterId = keyPair[0];
+                }
+                else if (keyPair.Contains("temperature"))
+                {
+                    keyPair.Remove("temperature");
+                    try
+                    {
+                        weatherData.temperature = double.Parse(keyPair[0]);
+                    }
+                    catch (System.FormatException)
+                    {
+                        weatherData.temperature = 0;
+                    }
+                }
+                else if (keyPair.Contains("pressure"))
+                {
+                    keyPair.Remove("pressure");
+                    try
+                    {
+                        weatherData.pressure = double.Parse(keyPair[0]);
+                    }
+                    catch (System.FormatException)
+                    {
+                        weatherData.pressure = 0;
+                    }
+                }
+                else if (keyPair.Contains("humidity"))
+                {
+                    keyPair.Remove("humidity");
+                    try
+                    {
+                        weatherData.humidity = int.Parse(keyPair[0]);
+                    }
+                    catch (System.FormatException)
+                    {
+                        weatherData.humidity = 0;
+                    }
+                }
+                else if (keyPair.Contains("windSpeed"))
+                {
+                    keyPair.Remove("windSpeed");
+                    try
+                    {
+                        weatherData.windSpeed = double.Parse(keyPair[0]);
+                    }
+                    catch (System.FormatException)
+                    {
+                        weatherData.windSpeed = 0.0;
+                    }
+                }
+                else if (keyPair.Contains("date"))
+                {
+                    keyPair.Remove("date");
+                    try
+                    {
+                        weatherData.date = int.Parse(keyPair[0]);
+                    }
+                    catch (System.FormatException)
+                    {
+                        weatherData.date = 0;
+                    }
+                }
+                else if (keyPair.Contains("county"))
+                {
+                    keyPair.Remove("county");
+                    try
+                    {
+                        weatherData.county = (Counties)Enum.Parse(typeof(Counties), keyPair[0]);
+                    }
+                    catch (System.FormatException)
+                    {
+                        weatherData.county = Counties.Hertfordshire;
+                    }
+                }
+                else if (keyPair.Contains("WeatherCondition"))
+                {
+                    keyPair.Remove("WeatherCondition");
+                    try
+                    {
+                        weatherData.WeatherCondition = (WeatherConditions)Enum.Parse(typeof(WeatherConditions), keyPair[0]);
+                    }
+                    catch (System.FormatException)
+                    {
+                        weatherData.WeatherCondition = WeatherConditions.PartiallyCloudy;
+                    }
+
+                }
+
+            }
+
+            return weatherData;
+
+        }
+
+        static UserData SeperateHtmlIntoUserData(string data)
+        {
+            UserData userData = new UserData();
+            List<List<string>> seperatedKeyPairs = SeperateHtmlReponseIntoKeyPairs(data);
+
+            foreach (List<string> keyPair in seperatedKeyPairs) 
+            {
+                if (keyPair.Contains("userName")) 
+                {
+                    keyPair.Remove("userName");
+                    userData.userName = keyPair[0];
+                }
+                else if (keyPair.Contains("password"))
+                {
+                    keyPair.Remove("password");
+                    userData.password = keyPair[0];
+                }
+                else if (keyPair.Contains("permissions"))
+                {
+                    keyPair.Remove("permissions");
+                    try
+                    {
+                        userData.permissions = int.Parse(keyPair[0]);
+                    }
+                    catch (System.FormatException)
+                    {
+                        userData.permissions = 0;
+                    }
+                    
+                }
+            }
+
+            return userData;
+
+        }
+
         public void Main()
         {
             using var listener = new HttpListener();
@@ -123,103 +329,97 @@ namespace WeatherPrediction
 
             while (true)
             {
-                HttpListenerContext context = listener.GetContext();
+                this.context = listener.GetContext();
                 HttpListenerRequest req = context.Request;
 
                 Console.WriteLine($"Received {req.HttpMethod} request to {req.Url.AbsolutePath} from {req.Url}");
 
-                if (req.HttpMethod == "GET")
+                if (!this.runningCommand)
                 {
-                    if (req.Url.AbsolutePath == "/weather-data")
+                    if (req.HttpMethod == "GET")
                     {
-                        string data = RetrieveWeatherData();
-                        SendHttpResponse(context, (int)HttpStatusCode.OK, data);
-                    }
-                    else if (req.Url.AbsolutePath == "/weather-data/county")
-                    {
-                        string county = req.QueryString["county"];
-                        string data = RetrieveWeatherData(county);
-
-                        SendHttpResponse(context, (int)HttpStatusCode.OK, data);
-                    }
-
-                    else
-                    {
-                        SendNotFoundResponse(context);
-                    }
-                }
-                else if (req.HttpMethod == "POST")
-                {
-                    if (req.Url.AbsolutePath == "/login")
-                    {
-                        string data = GetRequestData(req);
-
-                        bool authenticated = AttemptLogin(data);
-
-                        if (authenticated)
+                        if (req.Url.AbsolutePath == "/weather-data")
                         {
-                            SendHttpResponse(context, (int)HttpStatusCode.OK, "{id: abcd12345}");
+                            StartingCommand(requestTypes.GetWeatherData);
+                            string data = RetrieveWeatherData();
+                            SendHttpResponse((int)HttpStatusCode.OK, data);
+                        }
+                        else if (req.Url.AbsolutePath == "/weather-data/county")
+                        {
+                            StartingCommand(requestTypes.GetWeatherData);
+                            string county = req.QueryString["county"];
+                            string data = RetrieveWeatherData(county);
+
+                            SendHttpResponse((int)HttpStatusCode.OK, data);
+                        }
+
+                        else
+                        {
+                            SendNotFoundResponse();
+                        }
+                    }
+                    else if (req.HttpMethod == "POST")
+                    {
+                        if (req.Url.AbsolutePath == "/login")
+                        {
+                            StartingCommand(requestTypes.PostLogin);
+                            LoginUserEvent?.Invoke(this, SeperateHtmlIntoUserData(GetRequestData(req)));
+
+                        }
+                        else if (req.Url.AbsolutePath == "/signup")
+                        {
+                            StartingCommand(requestTypes.PostSignUp);
+                            UserData userData = SeperateHtmlIntoUserData(GetRequestData(req));
+                            // PF: Sam I'm fucking lost, this runs then stops https://www.youtube.com/watch?v=nVakO0Iq-Zk
+                            // PF: This is the same for all of them, I'll replace it when it works but for now I'm just putting them in
+                            AddUserEvent?.Invoke(this, userData);
+
+                        }
+                        // put something here to make sure everything is authenticated
+                        else if (req.Url.AbsolutePath == "/predict")
+                        {
+                            StartingCommand(requestTypes.PostPredict);
+                            WeatherData data = SeperateHtmlIntoWeatherData(GetRequestData(req));
+
+                            PredictWeatherEvent?.Invoke(this, data);
+                        }
+                        else if (req.Url.AbsolutePath == "/weather-data")  //need admin auth here
+                        {
+                            StartingCommand(requestTypes.PostWeatherData);
+                            AddWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
                         }
                         else
                         {
-                            SendHttpResponse(context, (int)HttpStatusCode.Unauthorized, "Unknown user");
+                            SendNotFoundResponse();
                         }
-
-                    }
-                    else if (req.Url.AbsolutePath == "/signup")
+                        }
+                    else if (req.HttpMethod == "PUT")
                     {
-                        string signUpRequest = GetRequestData(req);
-
-                        string signUpResult = SignUpUser(signUpRequest);
-
-                        if (signUpResult == "conflict")
+                        if (req.Url.AbsolutePath == "weather-data")
                         {
-                            SendHttpResponse(context, (int)HttpStatusCode.Conflict, "userConflict");
+                            StartingCommand(requestTypes.PutWeatherData);
+                            UpdateWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
+                        }
+                        else if(req.Url.AbsolutePath == "users")
+                        {
+                            StartingCommand(requestTypes.PutWeatherData);
+                            UpdateUserDataEvent?.Invoke(this, SeperateHtmlIntoUserData(GetRequestData(req)));
                         }
                         else
                         {
-                            SendHttpResponse(context, (int)HttpStatusCode.Accepted, signUpResult);
+                            SendNotFoundResponse();
                         }
-
-                    }
-                    // put something here to make sure everything is authenticated
-                    else if (req.Url.AbsolutePath == "/predict")
-                    {
-                        string data = GetRequestData(req);
-                        string prediction = GeneratePrediction(data);
-
-                        SendHttpResponse(context, (int)HttpStatusCode.OK, prediction);
-                    }
-                    else if (req.Url.AbsolutePath == "/weather-data")  //need admin auth here
-                    {
-                        string data = GetRequestData(req);
-                        SendDataToDatabase(data);
-                        SendHttpResponse(context, (int)HttpStatusCode.Created);
                     }
                     else
                     {
-                        SendNotFoundResponse(context);
+                        SendNotFoundResponse();
                     }
                 }
-                else if (req.HttpMethod == "PUT")
+                else 
                 {
-                    if (req.Url.AbsolutePath == "weather-data")
-                    {
-                        string data = GetRequestData(req);
-                        UpdateDataInDatabase(data, "1234567890");
-                        SendHttpResponse(context, (int)HttpStatusCode.Accepted);
-                    }
-                    else
-                    {
-                        SendNotFoundResponse(context);
-                    }
+                    SendHttpResponse((int)HttpStatusCode.Conflict); 
                 }
-
-                else
-                {
-                    SendNotFoundResponse(context);
-                }
-
+                
             }
         }
     }
