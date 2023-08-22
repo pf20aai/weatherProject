@@ -19,6 +19,7 @@ webServer.AddWeatherDataEvent += new EventHandler<WeatherData>(HandleMakePredict
 webServer.UpdateWeatherDataEvent += new EventHandler<WeatherData>(HandleUpdateWeatherData);
 webServer.UpdateUserDataEvent += new EventHandler<UserData>(HandleUpdateUserData);
 webServer.LoginUserEvent += new EventHandler<UserData>(HandleUserLogin);
+webServer.GetUserEvent += new EventHandler<UserData>(HandleGetSingleUserProfile);
 
 void HandleUserLogin(object sender, UserData userData)
 {
@@ -79,7 +80,7 @@ void HandleGetSingleUserProfile(object sender, UserData theData)
     {
         dataForWebserver.commandSuccessful = false;
     }
-    //webserver.DoneCommandWithUserData(dataForWebserver);      //Note this is different to the previous commands because we actually want to send data back to the web server not just a bool
+    webServer.DoneWithUserData(dataForWebserver);      //Note this is different to the previous commands because we actually want to send data back to the web server not just a bool
 }
 
 //Makes sure the window doesn't close after everything is done

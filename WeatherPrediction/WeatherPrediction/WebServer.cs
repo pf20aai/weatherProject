@@ -35,6 +35,8 @@ namespace WeatherPrediction
 
         public event EventHandler<UserData> LoginUserEvent;
 
+        public event EventHandler<UserData> GetUserEvent;
+
         // methods
 
         // Event methods
@@ -63,6 +65,20 @@ namespace WeatherPrediction
             else 
             { 
                 SendHttpResponse((int)HttpStatusCode.BadRequest);
+            }
+
+            StoppingCommand();
+        }
+
+        public void DoneWithUserData(UserDataDoneCommand userData)
+        {
+            if (userData.commandSuccessful)
+            {
+                SendHttpResponse((int)HttpStatusCode.OK, FormatCommandUserDataIntoHtmlString(userData));
+            }
+            else
+            {
+                SendHttpResponse((int)HttpStatusCode.NotFound);
             }
 
             StoppingCommand();
@@ -163,6 +179,16 @@ namespace WeatherPrediction
             weatherDataString += $"\nEstimated conditions: {weatherData.WeatherCondition}";
 
             return weatherDataString;
+        }
+
+        static string FormatCommandUserDataIntoHtmlString(UserDataDoneCommand userData)
+        {
+            string userDataString = "";
+
+            userDataString += $"\nUser Id: {userData.userName}";
+            userDataString += $"\nUser permissions: {userData.permissions}";
+
+            return userDataString;
         }
 
         static List<List<string>> SeperateHtmlReponseIntoKeyPairs(string data)
@@ -352,7 +378,13 @@ namespace WeatherPrediction
 
                             SendHttpResponse((int)HttpStatusCode.OK, data);
                         }
-
+                        else if (req.Url.AbsolutePath == "/user")
+                        {
+                            StartingCommand(requestTypes.GetWeatherData);
+                            UserData userData = new UserData;
+                            userData.userName = req.QueryString["id"];
+                            GetUserEvent?.Invoke(this, userData);
+                        }
                         else
                         {
                             SendNotFoundResponse();
