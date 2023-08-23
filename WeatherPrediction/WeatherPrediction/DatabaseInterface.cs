@@ -7,6 +7,14 @@ using Microsoft.Data.Sqlite;
 
 namespace WeatherPrediction
 {
+    /// <summary>
+    /// This class is responsible for handling all of the databsse requests from the rest of the program
+    /// It allows for the creation, Deletion, Update and reading of data from the database
+    /// The database is based on SQLite so it compatible with most SQL Commands which is what is used to interface to the database
+    /// 
+    /// On start up the program will instanciate this class which will open up a connection to the database and check if it is populated with test data.
+    /// If there is no test data it will create the tables and populate them with test data
+    /// </summary>
     public class DatabaseInterface
     {
         //Class Attributes
@@ -24,6 +32,10 @@ namespace WeatherPrediction
             tablesPreInitialised = CreateInitialTables(weatherSQLConnection);
             InsertTestData(weatherSQLConnection);
             Console.WriteLine("Database Setup");
+
+            //SB: Put any Database Test lines Here
+            //RemoveWeatherDataFromDatabase("Bobby" , 54321);
+
         }
 
         //Database Functions
@@ -115,6 +127,7 @@ namespace WeatherPrediction
 
             bool commandSuccessful;
 
+            //Note: This does not have to do the same check as the user add for if the data already exists because we have the time/date which will be unique down to the second
             try
             {
                 int countyInt = ((int)county);          //We convert the Enum to an Int because we can only store simple data types in the database
@@ -134,6 +147,14 @@ namespace WeatherPrediction
             return commandSuccessful;
         }
 
+
+        /// <summary>
+        /// Updates a users information with the attributes provided, will return whether the operation was successful or not
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <param name="permissions"></param>
+        /// <returns></returns>
         public bool UpdateUserDataToDatabase(string userName, string password, int permissions)
         {
             bool commandSuccessful;
@@ -153,6 +174,20 @@ namespace WeatherPrediction
             return commandSuccessful;
         }
 
+
+        /// <summary>
+        /// Updates a set of Weather data with the attributes provided, will return whether the operation was successful or not
+        /// for this to work the date and userName must be the same as a matching piece of data in the database
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="temperature"></param>
+        /// <param name="pressure"></param>
+        /// <param name="humidity"></param>
+        /// <param name="windSpeed"></param>
+        /// <param name="date"></param>
+        /// <param name="county"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
         public bool UpdateWeatherDataToDatabase(string userName, double temperature, double pressure, int humidity, double windSpeed, int date, Counties county, WeatherConditions condition)
         {
             bool commandSuccessful;
@@ -175,7 +210,13 @@ namespace WeatherPrediction
             return commandSuccessful;
         }
 
-        //SB: NOT COMPLETE
+
+        /// <summary>
+        /// Reads a single users information from the database.
+        /// This function does not do encryption or decryption that must be done in program
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         public UserData ReadSingleUserDataFromDatabase(string username)
         {
             UserData userData = new UserData();
@@ -189,35 +230,110 @@ namespace WeatherPrediction
 
         }
 
-        //SB: NOT COMPLETE
-        public string ReadAllUserDataFromDatabase()
+        public List <UserData> ReadAllUserDataFromDatabase()
         {
-            return "";
+            List <UserData> listOfUsers = new List<UserData>();
+            string getListOfUsers = "SELECT *" + " FROM " + userTable;
+            SqliteCommand sqlite_cmd;
+            sqlite_cmd = weatherSQLConnection.CreateCommand();
+            sqlite_cmd.CommandText = getListOfUsers;
+            SqliteDataReader sqliteDataReader = sqlite_cmd.ExecuteReader();
+
+            while (sqliteDataReader.Read())
+            {
+                List<string> userDataAsString = new List<string>();
+                UserData userData = new UserData();
+                int column = 0;
+                while (column <= userTableNumberOfColumns)
+                {
+                    userDataAsString.Add(sqliteDataReader.GetString(column));
+                    column++;
+                }
+                userData.userName = userDataAsString[0];
+                userData.password = userDataAsString[1];
+                userData.permissions = int.Parse(userDataAsString[2]);
+                listOfUsers.Add(userData);
+            }
+
+            return listOfUsers;
 
         }
 
-        //SB: NOT COMPLETE
-        public string ReadWeatherDataSetFromDatabase(string county)
-        {
-            return "";
+        public List<WeatherData> ReadWeatherDataSetFromDatabase(Counties county)
+        { 
+            int countyInt = ((int)county); //We convert the Enum to an Int because we can only store simple data types in the database
+
+            List<WeatherData> listOfWeatherData = new List<WeatherData>();
+            string getWeatherForCounty = "SELECT *" + " FROM " + weatherTable + " WHERE County = '" + countyInt + "';";
+            SqliteCommand sqlite_cmd;
+            sqlite_cmd = weatherSQLConnection.CreateCommand();
+            sqlite_cmd.CommandText = getWeatherForCounty;
+            SqliteDataReader sqliteDataReader = sqlite_cmd.ExecuteReader();
+
+            while (sqliteDataReader.Read())
+            {
+                List<string> weatherDataAsString = new List<string>();
+                WeatherData weatherData = new WeatherData();
+                int column = 0;
+                while (column <= weatherTableNumberOfColumns)
+                {
+                    weatherDataAsString.Add(sqliteDataReader.GetString(column));
+                    column++;
+                }
+                weatherData.reporterId = weatherDataAsString[0];
+                weatherData.temperature = double.Parse(weatherDataAsString[1]);
+                weatherData.pressure = double.Parse(weatherDataAsString[2]);
+                weatherData.humidity = int.Parse(weatherDataAsString[3]);
+                weatherData.windSpeed = double.Parse(weatherDataAsString[4]);
+                weatherData.date = int.Parse(weatherDataAsString[5]);
+                weatherData.county = (Counties)int.Parse(weatherDataAsString[6]);
+                weatherData.WeatherCondition = (WeatherConditions)int.Parse(weatherDataAsString[7]);
+
+                listOfWeatherData.Add(weatherData);
+            }
+
+            return listOfWeatherData;
         }
 
-        //SB: NOT COMPLETE
         public bool RemoveUserDataFromDatabase(string userName)
         {
             bool commandSuccessful;
 
-            commandSuccessful = true;
+            try
+            {
+
+                SqliteCommand sqlite_cmd;
+                sqlite_cmd = weatherSQLConnection.CreateCommand();
+                sqlite_cmd.CommandText = "DELETE FROM " + userTable + " WHERE Username = '" + userName + "';";
+                sqlite_cmd.ExecuteNonQuery();
+                commandSuccessful = true;
+            }
+            catch
+            {
+                commandSuccessful = false;
+            }
 
             return commandSuccessful;
         }
 
-        //SB: NOT COMPLETE
         public bool RemoveWeatherDataFromDatabase(string userName, int date)
         {
             bool commandSuccessful;
+            Console.WriteLine("Removing Weather From Database: " + userName + " " + date);
 
-            commandSuccessful = true;
+            try
+            {
+
+                SqliteCommand sqlite_cmd;
+                sqlite_cmd = weatherSQLConnection.CreateCommand();
+                sqlite_cmd.CommandText = "DELETE FROM " + weatherTable + " WHERE Reporter = '" + userName + "' AND Date = '" + date +  "';";
+                sqlite_cmd.ExecuteNonQuery();
+                commandSuccessful = true;
+            }
+            catch
+            {
+                commandSuccessful = false;
+            }
 
             return commandSuccessful;
         }
@@ -284,10 +400,10 @@ namespace WeatherPrediction
                 Console.WriteLine("Weather Table Does Not Exist Creating Table");
 
                 // Column 1: Reporter Id    (String)
-                // Column 2: Temperature    (Double)
-                // Column 3: Pressure       (Double)
-                // Column 4: Humidity       (Int)
-                // Column 5: Windspeed      (Double)
+                // Column 2: Temperature    (Double) In Celcius
+                // Column 3: Pressure       (Double) In Millibar
+                // Column 4: Humidity       (Int)    In Percentage
+                // Column 5: Windspeed      (Double) In MPH
                 // Column 6: Date           (Int)
                 // Column 7: County         (String)
                 // Column 8: Condition      (String)(Enum)
@@ -396,6 +512,26 @@ namespace WeatherPrediction
                 Console.WriteLine(myreader);
             }
             conn.Close();
+        }
+
+
+        /// <summary>
+        /// This is an XOR Encryption and Decryption Method
+        /// Simply pass the string in and a key (In this case we use the Username Length) and it will either encrypt of decrypt for you
+        /// Simple But Effective. The key MUST be the same for Encyption and Decryption
+        /// </summary>
+        static string EncryptDecrypt(string stringToConvert, int UsernameLength)
+        {
+            StringBuilder inputStringBuild = new StringBuilder(stringToConvert);
+            StringBuilder outStringBuild = new StringBuilder(stringToConvert.Length);
+            char stringAsChar;
+            for (int iCount = 0; iCount < stringToConvert.Length; iCount++)
+            {
+                stringAsChar = inputStringBuild[iCount];
+                stringAsChar = (char)(stringAsChar ^ UsernameLength);
+                outStringBuild.Append(stringAsChar);
+            }
+            return outStringBuild.ToString();
         }
     }
 }

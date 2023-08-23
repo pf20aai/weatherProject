@@ -8,7 +8,7 @@ namespace WeatherPrediction
 {
     public class WeatherData
     {
-        public string reporterId;
+        public string reporterId = "";
         public double temperature;
         public double pressure;
         public int humidity;
@@ -27,6 +27,11 @@ namespace WeatherPrediction
             date = theDate;
             county = theCounty;
             WeatherCondition = theCondition;
+        }
+
+        public WeatherData()
+        {
+
         }
     }
 }
