@@ -4,15 +4,22 @@ using WeatherPrediction;
 Console.WriteLine("Beginning Program!");
 //GlobalAttributes
 DatabaseInterface databaseInterface = new DatabaseInterface();
+//SB don't forget to uncomment
 //WebServer webServer = new WebServer();
 //webServer.Main();
 
 
 
-//webserver.XXXXXXXXX += HandleAddUserRequest;
-//webserver.XXXXXXXXX += HandleAddWeatherDataRequest;
-//webserver.XXXXXXXXX += HandleUpdateUserData;
-//webserver.XXXXXXXXX += HandleUpdateWeatherData;
+//webserver.XXXXXXXXX += new EventHandler<UserData>     (HandleAddUserRequest);
+//webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleAddWeatherDataRequest);
+//webserver.XXXXXXXXX += new EventHandler<UserData>     (HandleUpdateUserData);
+//webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleUpdateWeatherData);
+//webserver.XXXXXXXXX += new EventHandler<UserData>     (HandleGetSingleUserProfile);
+//webserver.XXXXXXXXX += new EventHandler               (HandleReadAllUserDataFromDatabase);
+//webserver.XXXXXXXXX += new EventHandler<Counties>     (HandleReadWeatherDataSetFromDatabase);
+//webserver.XXXXXXXXX += new EventHandler<UserData>     (HandleRemoveUserDataFromDatabase);
+//webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleRemoveWeatherDataFromDatabase);
+//webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleWeatherPrediction);
 
 void HandleAddUserRequest(object sender, UserData theData)
 {
@@ -110,18 +117,101 @@ void HandleWeatherPrediction(object sender, WeatherData theData)
     //webserver.DoneWeatherCommand(commandSuccesful, thePrediction);
 }
 
-string MakePrediction(List<WeatherData> historicalData, WeatherData userData)
+
+//SB: This function is going to be moved into it's own class when it is working correctly
+/// <summary>
+/// This fucntion carries out the whole of the Prediction process when passed with a set of historical Data and User Weather Data
+/// </summary>
+string MakePrediction(List<WeatherData> historicalData, WeatherData userWeatherData)
 {
-    // 30 days in epoch is 2,592,000
-    int epochMonth = 2592000;
+    int currentEpochTime = userWeatherData.date;
+    int oneMonthEpochTime = currentEpochTime - PredicitionConstants.epochMonth;
     //First we need to get all the data that is relevant to the prediction we are making (Like in the last month?)
     //Do this by finding a month ago in Epoch and then filtering the list of data based off of that
+    List<WeatherData> filteredData = new List<WeatherData>();
+    List<WeatherData> Level2Match = new List<WeatherData>();
+    List<WeatherData> Level3Match = new List<WeatherData>();
+
+    foreach (WeatherData weatherData in historicalData)
+    {
+        if(weatherData.date >= oneMonthEpochTime)
+        {
+            filteredData.Add(weatherData);
+        }
+    }
+
+    double tempLow = userWeatherData.temperature - PredicitionConstants.TemperatureDiff;
+    double tempHigh = userWeatherData.temperature + PredicitionConstants.TemperatureDiff;
+    double pressureLow = userWeatherData.pressure - PredicitionConstants.PressureDiff;
+    double pressureHigh = userWeatherData.pressure + PredicitionConstants.PressureDiff;
+    int humidLow = userWeatherData.humidity - PredicitionConstants.HumidityDiff;
+    int humidHigh = userWeatherData.humidity + PredicitionConstants.HumidityDiff;
+
+
     //Check what data in that set is 'Similar' to our user data if any
-    //then we use their condition as our own
+    foreach (WeatherData weatherData in filteredData)
+    {
+        if(weatherData.temperature <= tempHigh      && weatherData.temperature >= tempLow
+            && weatherData.pressure <= pressureHigh && weatherData.pressure >= pressureLow
+            && weatherData.humidity <= humidHigh    && weatherData.humidity >= humidLow)
+        {
+            Level3Match.Add(weatherData);
+        }
+        else if(weatherData.pressure <= pressureHigh && weatherData.pressure >= pressureLow
+                && weatherData.humidity <= humidHigh && weatherData.humidity >= humidLow)
+        {
+            Level2Match.Add(weatherData);
+        }
+    }
 
-    //If nothing matches we do a widen search?
+    //then we use their condition as our own, as a mean for all the level 3s
+    bool IsEnoughLevel3HistoricData = false;
+    bool IsEnoughLevel2HistoricData = false;
+    if (Level3Match.Count > 3)
+    {
+        IsEnoughLevel3HistoricData = true;
+    }
 
-    //else we will use some very basic prediction using the pressure
+    if (Level2Match.Count > 3)
+    {
+        IsEnoughLevel2HistoricData = true;
+    }
+
+    //SB: TODO
+    //If there's enough data with a very good match what we can do is we will use the data to get a mean conditional value and then use averages to allow for us to round it
+    if (IsEnoughLevel3HistoricData)
+    {
+        double totalCondition = 0;
+        double meanCondition;
+        foreach(WeatherData weatherData in Level3Match)
+        {
+            totalCondition = totalCondition + (double)weatherData.WeatherCondition;
+        }
+        meanCondition = totalCondition / Level3Match.Count();
+
+    }
+
+    //SB: TODO
+    //If there's enough data with a good match what we can do is we will use the data to get a mean conditional value and then use averages to allow for us to round it with more weighting
+    else if (IsEnoughLevel2HistoricData)
+    {
+        double totalCondition = 0;
+        double meanCondition;
+        foreach (WeatherData weatherData in Level3Match)
+        {
+            totalCondition = totalCondition + (double)weatherData.WeatherCondition;
+        }
+        meanCondition = totalCondition / Level2Match.Count();
+
+    }
+    //SB: TODO
+    //we will then use some very basic prediction using the pressure and humidity and time of year hopefully they match
+    else
+    {
+
+    }
+
+
 
     return "";
 }

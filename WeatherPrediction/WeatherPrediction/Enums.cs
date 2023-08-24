@@ -69,10 +69,10 @@ namespace WeatherPrediction
         PartiallyCloudy,
         Cloudy,
         Overcast,
-        Rain,
         Drizzle,
-        Snow,
-        Stormy
+        Rain,
+        Stormy,
+        Snow
     }
 
     public enum permissionTypes
