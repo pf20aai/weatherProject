@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using WeatherPrediction;
 
 Console.WriteLine("Beginning Program!");
@@ -9,44 +9,58 @@ DatabaseInterface databaseInterface = new DatabaseInterface();
 //webServer.Main();
 
 
-
-//webserver.XXXXXXXXX += new EventHandler<UserData>     (HandleAddUserRequest);
-//webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleAddWeatherDataRequest);
-//webserver.XXXXXXXXX += new EventHandler<UserData>     (HandleUpdateUserData);
-//webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleUpdateWeatherData);
-//webserver.XXXXXXXXX += new EventHandler<UserData>     (HandleGetSingleUserProfile);
-//webserver.XXXXXXXXX += new EventHandler               (HandleReadAllUserDataFromDatabase);
+webServer.AddUserEvent += new EventHandler<UserData> (HandleAddUserRequest);
+webServer.AddWeatherDataEvent += new EventHandler<WeatherData>(HandleAddWeatherDataRequest);
+webServer.AddWeatherDataEvent += new EventHandler<WeatherData>(HandleMakePrediction);
+webServer.UpdateWeatherDataEvent += new EventHandler<WeatherData>(HandleUpdateWeatherData);
+webServer.UpdateUserDataEvent += new EventHandler<UserData>(HandleUpdateUserData);
+webServer.LoginUserEvent += new EventHandler<UserData>(HandleUserLogin);
+webServer.GetUserEvent += new EventHandler<UserData>(HandleGetSingleUserProfile);
 //webserver.XXXXXXXXX += new EventHandler<Counties>     (HandleReadWeatherDataSetFromDatabase);
 //webserver.XXXXXXXXX += new EventHandler<UserData>     (HandleRemoveUserDataFromDatabase);
 //webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleRemoveWeatherDataFromDatabase);
 //webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleWeatherPrediction);
+//webserver.XXXXXXXXX += new EventHandler               (HandleReadAllUserDataFromDatabase);
 
-void HandleAddUserRequest(object sender, UserData theData)
+void HandleUserLogin(object sender, UserData userData)
+{
+    //PF Sam something here needs to be done to check if the user is authnticated correctly
+    AuthenticationData authenticationData = new AuthenticationData(); // placeholder
+    webServer.AuthenticateUser(authenticationData);
+}
+
+void HandleAddUserRequest(object sender, UserData theData) 
 {
     bool commandSuccesful;
     commandSuccesful = databaseInterface.AddUserDataToDatabase(theData.userName, theData.password, theData.permissions);
-    //webserver.DoneCommand(commandSuccesful);
+    webServer.DoneNoData(commandSuccesful);
 }
 
 void HandleAddWeatherDataRequest(object sender, WeatherData theData)
 {
     bool commandSuccesful;
     commandSuccesful = databaseInterface.AddWeatherDataToDatabase(theData.reporterId, theData.temperature, theData.pressure, theData.humidity, theData.windSpeed, theData.date, theData.county, theData.WeatherCondition);
-    //webserver.DoneCommand(commandSuccesful);
+    webServer.DoneNoData(commandSuccesful);
+}
+
+void HandleMakePrediction(object sender, WeatherData weatherData)
+{
+    //PF We need some prediction logic here
+    webServer.returnPrediction(weatherData);
 }
 
 void HandleUpdateUserData(object sender, UserData theData)
 {
     bool commandSuccesful;
     commandSuccesful = databaseInterface.UpdateUserDataToDatabase(theData.userName, theData.password, theData.permissions);
-    //webserver.DoneCommand(commandSuccesful);
+    webServer.DoneNoData(commandSuccesful);
 }
 
 void HandleUpdateWeatherData(object sender, WeatherData theData)
 {
     bool commandSuccesful;
     commandSuccesful = databaseInterface.UpdateWeatherDataToDatabase(theData.reporterId, theData.temperature, theData.pressure, theData.humidity, theData.windSpeed, theData.date, theData.county, theData.WeatherCondition);
-    //webserver.DoneCommand(commandSuccesful);
+    webServer.DoneNoData(commandSuccesful);
 }
 
 void HandleGetSingleUserProfile(object sender, UserData theData)
@@ -67,6 +81,7 @@ void HandleGetSingleUserProfile(object sender, UserData theData)
     {
         dataForWebserver.commandSuccessful = false;
     }
+    webServer.DoneWithUserData(dataForWebserver);      //Note this is different to the previous commands because we actually want to send data back to the web server not just a bool
     //SB: This wasn't the way to do it, cause we're just calling an operation there was no need for a whole new class, this can just be 2 parameters
     //webserver.DoneCommandWithUserData(dataForWebserver);      //Note this is different to the previous commands because we actually want to send data back to the web server not just a bool
 }
