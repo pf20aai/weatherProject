@@ -355,12 +355,12 @@ namespace WeatherPrediction
 
             while (true)
             {
-                this.context = listener.GetContext();
+                context = listener.GetContext();
                 HttpListenerRequest req = context.Request;
 
                 Console.WriteLine($"Received {req.HttpMethod} request to {req.Url.AbsolutePath} from {req.Url}");
 
-                if (!this.runningCommand)
+                if (!runningCommand)
                 {
                     if (req.HttpMethod == "GET")
                     {
@@ -375,13 +375,12 @@ namespace WeatherPrediction
                             StartingCommand(requestTypes.GetWeatherData);
                             string county = req.QueryString["county"];
                             string data = RetrieveWeatherData(county);
-
                             SendHttpResponse((int)HttpStatusCode.OK, data);
                         }
                         else if (req.Url.AbsolutePath == "/user")
                         {
                             StartingCommand(requestTypes.GetWeatherData);
-                            UserData userData = new UserData;
+                            UserData userData = new UserData();
                             userData.userName = req.QueryString["id"];
                             GetUserEvent?.Invoke(this, userData);
                         }
@@ -451,7 +450,7 @@ namespace WeatherPrediction
                 {
                     SendHttpResponse((int)HttpStatusCode.Conflict); 
                 }
-                
+
             }
         }
     }

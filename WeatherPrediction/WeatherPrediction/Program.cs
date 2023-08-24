@@ -4,12 +4,9 @@ using WeatherPrediction;
 Console.WriteLine("Beginning Program!");
 //GlobalAttributes
 DatabaseInterface databaseInterface = new DatabaseInterface();
-//SB don't forget to uncomment
-//WebServer webServer = new WebServer();
-//webServer.Main();
 
-
-webServer.AddUserEvent += new EventHandler<UserData> (HandleAddUserRequest);
+WebServer webServer = new WebServer();
+webServer.AddUserEvent += new EventHandler<UserData>(HandleAddUserRequest);
 webServer.AddWeatherDataEvent += new EventHandler<WeatherData>(HandleAddWeatherDataRequest);
 webServer.AddWeatherDataEvent += new EventHandler<WeatherData>(HandleMakePrediction);
 webServer.UpdateWeatherDataEvent += new EventHandler<WeatherData>(HandleUpdateWeatherData);
@@ -21,6 +18,15 @@ webServer.GetUserEvent += new EventHandler<UserData>(HandleGetSingleUserProfile)
 //webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleRemoveWeatherDataFromDatabase);
 //webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleWeatherPrediction);
 //webserver.XXXXXXXXX += new EventHandler               (HandleReadAllUserDataFromDatabase);
+webServer.Main();
+
+/// <summary>
+/// When using the server with PostMan use this command
+/// 
+/// userName=Jim&password=Alpha22&permissions=0
+/// 
+/// </summary>
+
 
 void HandleUserLogin(object sender, UserData userData)
 {
@@ -33,6 +39,7 @@ void HandleAddUserRequest(object sender, UserData theData)
 {
     bool commandSuccesful;
     commandSuccesful = databaseInterface.AddUserDataToDatabase(theData.userName, theData.password, theData.permissions);
+    Console.WriteLine("Sending Reply To Webserver");
     webServer.DoneNoData(commandSuccesful);
 }
 
@@ -243,10 +250,4 @@ static DateTime ConvertEpochToTimeDateFormat(int timeInEpoch)
     DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timeInEpoch);
     DateTime dateTime = dateTimeOffset.DateTime;
     return dateTime;
-}
-
-while (true)
-{
-    Console.ReadKey();
-
 }

@@ -89,7 +89,7 @@ namespace WeatherPrediction
                 {
                     SqliteCommand sqlite_cmd;
                     sqlite_cmd = weatherSQLConnection.CreateCommand();
-                    sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Password, Permission) VALUES(" + userName + "," + password + "," + permissions + "); ";
+                    sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Password, Permission) VALUES('" + userName + "','" + password + "'," + permissions + "); ";
                     sqlite_cmd.ExecuteNonQuery();
                     commandSuccessful = true;
                 }
@@ -134,7 +134,7 @@ namespace WeatherPrediction
                 int conditionInt = ((int)condition);    //We convert the Enum to an Int because we can only store simple data types in the database
                 SqliteCommand sqlite_cmd;
                 sqlite_cmd = weatherSQLConnection.CreateCommand();
-                sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES(" + userName + "," + temperature + "," + pressure + "," + humidity + "," + windSpeed + "," + date + "," + countyInt + "," + conditionInt + "); ";
+                sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('" + userName + "'," + temperature + "," + pressure + "," + humidity + "," + windSpeed + "," + date + "," + countyInt + "," + conditionInt + "); ";
                 sqlite_cmd.ExecuteNonQuery();
                 commandSuccessful = true;
             }
@@ -223,10 +223,17 @@ namespace WeatherPrediction
             List<string> theData = new List<string>();
             theData = findUser(username);
 
-            userData.userName = theData[0];
-            userData.password = theData[1];
-            userData.permissions = int.Parse(theData[2]);
-            return userData;
+            try
+            {
+                userData.userName = theData[0];
+                userData.password = theData[1];
+                userData.permissions = int.Parse(theData[2]);
+                return userData;
+            }
+            catch
+            {
+                return userData;
+            }
 
         }
 
@@ -361,8 +368,6 @@ namespace WeatherPrediction
                 }
             }
             sqliteDataReader.Close();
-
-            Console.WriteLine("User Data Size Is: " + userData.Count);
 
             foreach (string nextValue in userData)
             {
