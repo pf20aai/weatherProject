@@ -387,97 +387,136 @@ namespace WeatherPrediction
 
                 if (!runningCommand)
                 {
-                    if (req.HttpMethod == "GET")
+                    if (isAuthenticated)
                     {
-                        if (req.Url.AbsolutePath == "/weather-data")
+                        if (isAdmin)
                         {
-                            StartingCommand(requestTypes.GetWeatherData);
-                            string data = RetrieveWeatherData();
-                            SendHttpResponse((int)HttpStatusCode.OK, data);
-                        }
-                        else if (req.Url.AbsolutePath == "/weather-data/county")
-                        {
-                            StartingCommand(requestTypes.GetWeatherData);
-                            string county = req.QueryString["county"];
-                            string data = RetrieveWeatherData(county);
-                            SendHttpResponse((int)HttpStatusCode.OK, data);
-                        }
-                        else if (req.Url.AbsolutePath == "/user")
-                        {
-                            StartingCommand(requestTypes.GetWeatherData);
-                            UserData userData = new UserData();
-                            userData.userName = req.QueryString["id"];
-                            GetUserEvent?.Invoke(this, userData);
-                        }
-                        else if (req.Url.AbsolutePath == "/users")
-                        {
-                            StartingCommand(requestTypes.GetWeatherData);
-                            GetAllUsersEvent?.Invoke(this);
+                            if (req.HttpMethod == "GET")
+                            {
+                                if (req.Url.AbsolutePath == "/weather-data")
+                                {
+                                    StartingCommand(requestTypes.GetWeatherData);
+                                    string data = RetrieveWeatherData();
+                                    SendHttpResponse((int)HttpStatusCode.OK, data);
+                                }
+                                else if (req.Url.AbsolutePath == "/weather-data/county")
+                                {
+                                    StartingCommand(requestTypes.GetWeatherData);
+                                    string county = req.QueryString["county"];
+                                    string data = RetrieveWeatherData(county);
+                                    SendHttpResponse((int)HttpStatusCode.OK, data);
+                                }
+                                else if (req.Url.AbsolutePath == "/user")
+                                {
+                                    StartingCommand(requestTypes.GetWeatherData);
+                                    UserData userData = new UserData();
+                                    userData.userName = req.QueryString["id"];
+                                    GetUserEvent?.Invoke(this, userData);
+                                }
+                                else if (req.Url.AbsolutePath == "/users")
+                                {
+                                    StartingCommand(requestTypes.GetWeatherData);
+                                    // GetAllUsersEvent?.Invoke(this);
+                                }
+                                else
+                                {
+                                    SendNotFoundResponse();
+                                }
+                            }
+                            else if (req.HttpMethod == "POST")
+                            {
+                                if (req.Url.AbsolutePath == "/predict")
+                                {
+                                    StartingCommand(requestTypes.PostPredict);
+                                    WeatherData data = SeperateHtmlIntoWeatherData(GetRequestData(req));
+
+                                    PredictWeatherEvent?.Invoke(this, data);
+                                }
+                                else if (req.Url.AbsolutePath == "/weather-data")  //need admin auth here
+                                {
+                                    StartingCommand(requestTypes.PostWeatherData);
+                                    AddWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
+                                }
+                                else
+                                {
+                                    SendNotFoundResponse();
+                                }
+                            }
+                            else if (req.HttpMethod == "PUT")
+                            {
+                                if (req.Url.AbsolutePath == "weather-data")
+                                {
+                                    // PF put isn't working right now
+                                    StartingCommand(requestTypes.PutWeatherData);
+                                    UpdateWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
+                                }
+                                else if (req.Url.AbsolutePath == "users")
+                                {
+                                    StartingCommand(requestTypes.PutWeatherData);
+                                    UpdateUserDataEvent?.Invoke(this, SeperateHtmlIntoUserData(GetRequestData(req)));
+                                }
+                                else
+                                {
+                                    SendNotFoundResponse();
+                                }
+                            }
+                            else
+                            {
+                                SendNotFoundResponse();
+                            }
                         }
                         else
                         {
-                            SendNotFoundResponse();
-                        }
-                    }
-                    else if (req.HttpMethod == "POST")
-                    {
-                        if (req.Url.AbsolutePath == "/login")
-                        {
-                            StartingCommand(requestTypes.PostLogin);
-                            LoginUserEvent?.Invoke(this, SeperateHtmlIntoUserData(GetRequestData(req)));
+                            if (req.HttpMethod == "POST")
+                            {
+                                if (req.Url.AbsolutePath == "/predict")
+                                {
+                                    StartingCommand(requestTypes.PostPredict);
+                                    WeatherData data = SeperateHtmlIntoWeatherData(GetRequestData(req));
 
-                        }
-                        else if (req.Url.AbsolutePath == "/signup")
-                        {
-                            StartingCommand(requestTypes.PostSignUp);
-                            UserData userData = SeperateHtmlIntoUserData(GetRequestData(req));
-                            AddUserEvent?.Invoke(this, userData);
-
-                        }
-                        // put something here to make sure everything is authenticated
-                        else if (req.Url.AbsolutePath == "/predict")
-                        {
-                            StartingCommand(requestTypes.PostPredict);
-                            WeatherData data = SeperateHtmlIntoWeatherData(GetRequestData(req));
-
-                            PredictWeatherEvent?.Invoke(this, data);
-                        }
-                        else if (req.Url.AbsolutePath == "/weather-data")  //need admin auth here
-                        {
-                            StartingCommand(requestTypes.PostWeatherData);
-                            AddWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
-                        }
-                        else
-                        {
-                            SendNotFoundResponse();
-                        }
-                        }
-                    else if (req.HttpMethod == "PUT")
-                    {
-                        if (req.Url.AbsolutePath == "weather-data")
-                        {
-                            // PF put isn't working right now
-                            StartingCommand(requestTypes.PutWeatherData);
-                            UpdateWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
-                        }
-                        else if(req.Url.AbsolutePath == "users")
-                        {
-                            StartingCommand(requestTypes.PutWeatherData);
-                            UpdateUserDataEvent?.Invoke(this, SeperateHtmlIntoUserData(GetRequestData(req)));
-                        }
-                        else
-                        {
-                            SendNotFoundResponse();
+                                    PredictWeatherEvent?.Invoke(this, data);
+                                }
+                                else
+                                {
+                                    SendNotFoundResponse();
+                                }
+                            }
+                            else
+                            {
+                                SendNotFoundResponse();
+                            }
                         }
                     }
                     else
                     {
-                        SendNotFoundResponse();
+                        if (req.HttpMethod == "POST")
+                        {
+                            if (req.Url.AbsolutePath == "/login")
+                            {
+                                StartingCommand(requestTypes.PostLogin);
+                                LoginUserEvent?.Invoke(this, SeperateHtmlIntoUserData(GetRequestData(req)));
+
+                            }
+                            else if (req.Url.AbsolutePath == "/signup")
+                            {
+                                StartingCommand(requestTypes.PostSignUp);
+                                UserData userData = SeperateHtmlIntoUserData(GetRequestData(req));
+                                AddUserEvent?.Invoke(this, userData);
+
+                            }
+                            else
+                            {
+                                SendNotFoundResponse();
+                            }
+                        }
+                        else { SendNotFoundResponse(); }
+
+
                     }
                 }
-                else 
+                else
                 {
-                    SendHttpResponse((int)HttpStatusCode.Conflict); 
+                    SendHttpResponse((int)HttpStatusCode.Conflict);
                 }
 
             }
