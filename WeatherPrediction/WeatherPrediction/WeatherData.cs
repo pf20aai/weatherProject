@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualBasic;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace WeatherPrediction
 {
     public class WeatherData
     {
-        public string reporterId;
+        public string reporterId = "";
         public double temperature;
         public double pressure;
         public int humidity;
