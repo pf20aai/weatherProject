@@ -69,15 +69,26 @@ namespace WeatherPrediction
         PartiallyCloudy,
         Cloudy,
         Overcast,
-        Rain,
         Drizzle,
-        Snow,
-        Stormy
+        Rain,
+        Stormy,
+        Snow
     }
 
     public enum permissionTypes
     {
         User,
         Admin
+    }
+
+    public enum requestTypes
+    {
+        None,
+        GetWeatherData,
+        PostLogin,
+        PostSignUp,
+        PostPredict,
+        PostWeatherData,
+        PutWeatherData
     }
 }

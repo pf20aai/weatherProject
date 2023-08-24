@@ -9,6 +9,7 @@
 		Weather Input
 	</title>
 
+
 <style>
 	
 body{
@@ -99,7 +100,7 @@ body{
 		<div class="navbar"> 
 		  <a href="User Dashboard.html">Dashboard</a> <!-- User Dashboard Home Page Button/Link -->
 		  <a class="active" href="Weather Input.html">Input Data</a>
-		  <a href="WIP.html">History</a>
+		  <a href="Historic Data.html">History</a>
 		  <div class="navbar-right">
 		  	<a href="WIP.html">My Account</a><!-- Future update, add edit options to a user's profile -->
 		      <a href="Home Page.html">Logout</a><!-- Home Button/Link -->
@@ -111,7 +112,7 @@ body{
 
 <h2> Please enter your current weather conditions </h2>
 
-<form action="" method=""> <!-- Insert relevant link here -->
+<form action="http://localhost:80/predict" method="post" target="iframepredict" rel="external">
 	<label for="Date"> Date:</label><br>
 	<input type="date" id="Date" name="Date"><br>
 
@@ -178,15 +179,11 @@ body{
 
 	<label for="Windspeed">Windspeed:</label><br>
 	<input type="number" id="Windspeed" name="Windspeed"><br>
-	<br>
+	<input type="submit" value="submit">
 
-	<input type="submit" value="Submit">
-	</label>
-
-
-
-
-
+</label>
+</form>
+<iframe id="iframepredict" name="iframepredict" ></iframe>
 
 
 </div>

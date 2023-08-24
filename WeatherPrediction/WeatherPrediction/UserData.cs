@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +8,8 @@ namespace WeatherPrediction
 {
     public class UserData
     {
-        public string userName;
-        public string password;
+        public string userName = "";
+        public string password = "";
         public int permissions;
 
         public UserData(string theUserName, string thePassword, int thePermissions)
@@ -21,9 +21,7 @@ namespace WeatherPrediction
 
         public UserData()
         {
-            userName = "";
-            password = "";
-            permissions = 0;
-    }
+
+        }
     }
 }
