@@ -37,6 +37,8 @@ namespace WeatherPrediction
 
         public event EventHandler<UserData> GetUserEvent;
 
+        public event EventHandler GetAllUsersEvent;
+
         // methods
 
         // Event methods
@@ -70,7 +72,7 @@ namespace WeatherPrediction
             StoppingCommand();
         }
 
-        public void DoneWithUserData(UserDataDoneCommand userData)
+        public void DoneWithSingleUserData(UserDataDoneCommand userData)
         {
             if (userData.commandSuccessful)
             {
@@ -81,6 +83,21 @@ namespace WeatherPrediction
                 SendHttpResponse((int)HttpStatusCode.NotFound);
             }
 
+            StoppingCommand();
+        }
+
+        public void DoneWithUserDataList(bool commandSuccessful, List<UserData> userData)
+        {
+            if (commandSuccessful)
+            {
+                string fullUserDataString = "";
+
+                foreach (UserData user in userData)
+                {
+                    fullUserDataString += FormatUserDataIntoHtmlString(user);
+                }
+
+            }
             StoppingCommand();
         }
 
@@ -95,7 +112,6 @@ namespace WeatherPrediction
         // Webserver methods
         void StartingCommand(requestTypes requestType)
         {
-            Console.WriteLine("2");
             this.lastRequest = requestType;
             this.runningCommand = true;
         }
@@ -179,6 +195,15 @@ namespace WeatherPrediction
             weatherDataString += $"\nEstimated conditions: {weatherData.WeatherCondition}";
 
             return weatherDataString;
+        }
+
+        static string FormatUserDataIntoHtmlString(UserData userData)
+        {
+            string userDataString = "";
+
+            userDataString += $"\nUser Id: {userData.userName}, User permissions: {userData.permissions}";
+
+            return userDataString;
         }
 
         static string FormatCommandUserDataIntoHtmlString(UserDataDoneCommand userData)
@@ -384,6 +409,11 @@ namespace WeatherPrediction
                             userData.userName = req.QueryString["id"];
                             GetUserEvent?.Invoke(this, userData);
                         }
+                        else if (req.Url.AbsolutePath == "/users")
+                        {
+                            StartingCommand(requestTypes.GetWeatherData);
+                            GetAllUsersEvent?.Invoke(this);
+                        }
                         else
                         {
                             SendNotFoundResponse();
@@ -401,8 +431,6 @@ namespace WeatherPrediction
                         {
                             StartingCommand(requestTypes.PostSignUp);
                             UserData userData = SeperateHtmlIntoUserData(GetRequestData(req));
-                            // PF: Sam I'm fucking lost, this runs then stops https://www.youtube.com/watch?v=nVakO0Iq-Zk
-                            // PF: This is the same for all of them, I'll replace it when it works but for now I'm just putting them in
                             AddUserEvent?.Invoke(this, userData);
 
                         }
@@ -428,6 +456,7 @@ namespace WeatherPrediction
                     {
                         if (req.Url.AbsolutePath == "weather-data")
                         {
+                            // PF put isn't working right now
                             StartingCommand(requestTypes.PutWeatherData);
                             UpdateWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
                         }
