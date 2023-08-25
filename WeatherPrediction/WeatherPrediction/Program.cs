@@ -17,7 +17,7 @@ webServer.GetUserEvent += new EventHandler<UserData>(HandleGetSingleUserProfile)
 //webserver.XXXXXXXXX += new EventHandler<UserData>     (HandleRemoveUserDataFromDatabase);
 //webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleRemoveWeatherDataFromDatabase);
 //webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleWeatherPrediction);
-//webServer.GetAllUsersEvent += new EventHandler<UserData>(HandleReadAllUserDataFromDatabase);
+webServer.GetAllUsersEvent += new EventHandler<EventArgs> (HandleReadAllUserDataFromDatabase);
 webServer.Main();
 
 /// <summary>
@@ -95,7 +95,7 @@ void HandleGetSingleUserProfile(object sender, UserData theData)
     //webserver.DoneCommandWithUserData(dataForWebserver);      //Note this is different to the previous commands because we actually want to send data back to the web server not just a bool
 }
 
-void HandleReadAllUserDataFromDatabase(object sender, UserData userData)
+void HandleReadAllUserDataFromDatabase(object sender, EventArgs e)
 {
     bool commandSuccesful = false;
     List<UserData> theData = databaseInterface.ReadAllUserDataFromDatabase();

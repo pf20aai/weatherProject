@@ -37,7 +37,7 @@ namespace WeatherPrediction
 
         public event EventHandler<UserData> GetUserEvent;
 
-        public event EventHandler GetAllUsersEvent;
+        public event EventHandler<EventArgs> GetAllUsersEvent;
 
         // methods
 
@@ -96,8 +96,10 @@ namespace WeatherPrediction
                 {
                     fullUserDataString += FormatUserDataIntoHtmlString(user);
                 }
+                SendHttpResponse((int)(HttpStatusCode.OK), fullUserDataString);
 
             }
+            SendNotFoundResponse();
             StoppingCommand();
         }
 
@@ -416,7 +418,8 @@ namespace WeatherPrediction
                                 else if (req.Url.AbsolutePath == "/users")
                                 {
                                     StartingCommand(requestTypes.GetWeatherData);
-                                    // GetAllUsersEvent?.Invoke(this);
+                                    EventArgs e = new EventArgs(); 
+                                    GetAllUsersEvent?.Invoke(this, e);
                                 }
                                 else
                                 {
