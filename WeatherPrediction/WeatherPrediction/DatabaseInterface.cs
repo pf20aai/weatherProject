@@ -147,6 +147,7 @@ namespace WeatherPrediction
             return commandSuccessful;
         }
 
+        //SB: Extention to break this out into 2 sperate functions, 1 called UpdateUserPassword and 1 called UpdateUserPermissions
 
         /// <summary>
         /// Updates a users information with the attributes provided, will return whether the operation was successful or not
