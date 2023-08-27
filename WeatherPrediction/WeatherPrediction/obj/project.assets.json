@@ -333,19 +333,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Pjc\\.nuget\\packages\\": {}
+    "C:\\Users\\Pjc\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Dev\\git\\weatherProject\\Docs\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
+      "projectUniqueName": "C:\\Dev\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
       "projectName": "WeatherPrediction",
-      "projectPath": "C:\\Dev\\git\\weatherProject\\Docs\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
+      "projectPath": "C:\\Dev\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
       "packagesPath": "C:\\Users\\Pjc\\.nuget\\packages\\",
-      "outputPath": "C:\\Dev\\git\\weatherProject\\Docs\\weatherProject\\WeatherPrediction\\WeatherPrediction\\obj\\",
+      "outputPath": "C:\\Dev\\weatherProject\\WeatherPrediction\\WeatherPrediction\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\Pjc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -392,7 +397,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
       }
     }
   }

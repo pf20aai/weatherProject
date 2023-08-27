@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mzxyWfj6IMksN2eWe0RKse8w4AXnMWspFi1D28YsmMN31v2EBBpg6vQzz6WXuMJU7H9gTSyvK8nRVz+jc0yyug==",
+  "dgSpecHash": "kM8Z5LqiBtNxjw/MZunN7DZ8KbkSIGnc5nd78hvOF6VjQgkN/TeZSIbImS03xkPzGMUaGdzXUL3EjdIm7T4nng==",
   "success": true,
-  "projectFilePath": "C:\\Dev\\git\\weatherProject\\Docs\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
+  "projectFilePath": "C:\\Dev\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Pjc\\.nuget\\packages\\microsoft.data.sqlite\\7.0.9\\microsoft.data.sqlite.7.0.9.nupkg.sha512",
     "C:\\Users\\Pjc\\.nuget\\packages\\microsoft.data.sqlite.core\\7.0.9\\microsoft.data.sqlite.core.7.0.9.nupkg.sha512",

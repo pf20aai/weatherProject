@@ -8,15 +8,14 @@ DatabaseInterface databaseInterface = new DatabaseInterface();
 WebServer webServer = new WebServer();
 webServer.AddUserEvent += new EventHandler<UserData>(HandleAddUserRequest);
 webServer.AddWeatherDataEvent += new EventHandler<WeatherData>(HandleAddWeatherDataRequest);
-webServer.PredictWeatherEvent += new EventHandler<WeatherData>(HandleMakePrediction);
+webServer.PredictWeatherEvent += new EventHandler<WeatherData>(HandleWeatherPrediction);
 webServer.UpdateWeatherDataEvent += new EventHandler<WeatherData>(HandleUpdateWeatherData);
 webServer.UpdateUserDataEvent += new EventHandler<UserData>(HandleUpdateUserData);
 webServer.LoginUserEvent += new EventHandler<UserData>(HandleUserLogin);
 webServer.GetUserEvent += new EventHandler<UserData>(HandleGetSingleUserProfile);
-//webserver.XXXXXXXXX += new EventHandler<Counties>     (HandleReadWeatherDataSetFromDatabase);
-//webserver.XXXXXXXXX += new EventHandler<UserData>     (HandleRemoveUserDataFromDatabase);
-//webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleRemoveWeatherDataFromDatabase);
-//webserver.XXXXXXXXX += new EventHandler<WeatherData>  (HandleWeatherPrediction);
+webServer.GetWeatherDataEvent += new EventHandler<Counties>(HandleReadWeatherDataSetFromDatabase);
+webServer.DeleteUserDataEvent += new EventHandler<UserData>     (HandleRemoveUserDataFromDatabase);
+webServer.DeleteWeatherDataEvent += new EventHandler<WeatherData>  (HandleRemoveWeatherDataFromDatabase);
 webServer.GetAllUsersEvent += new EventHandler<EventArgs> (HandleReadAllUserDataFromDatabase);
 webServer.Main();
 
@@ -50,12 +49,6 @@ void HandleAddWeatherDataRequest(object sender, WeatherData theData)
     bool commandSuccesful;
     commandSuccesful = databaseInterface.AddWeatherDataToDatabase(theData.reporterId, theData.temperature, theData.pressure, theData.humidity, theData.windSpeed, theData.date, theData.county, theData.WeatherCondition);
     webServer.DoneNoData(commandSuccesful);
-}
-
-void HandleMakePrediction(object sender, WeatherData weatherData)
-{
-    //PF We need some prediction logic here
-    webServer.returnPrediction(weatherData);
 }
 
 void HandleUpdateUserData(object sender, UserData theData)
@@ -114,21 +107,21 @@ void HandleReadWeatherDataSetFromDatabase(object sender, Counties county)
     {
         commandSuccesful = true;
     }
-    //webserver.DoneCommandWithWeatherData(commandSuccesful, theData);
+    webServer.DoneCommandWithWeatherData(commandSuccesful, theData);
 }
 
 void HandleRemoveUserDataFromDatabase(object sender, UserData theData)
 {
     bool commandSuccesful;
     commandSuccesful = databaseInterface.RemoveUserDataFromDatabase(theData.userName);
-    //webserver.DoneCommand(commandSuccesful);
+    webServer.DoneNoData(commandSuccesful);
 }
 
 void HandleRemoveWeatherDataFromDatabase(object sender, WeatherData theData)
 {
     bool commandSuccesful;
     commandSuccesful = databaseInterface.RemoveWeatherDataFromDatabase(theData.reporterId, theData.date);
-    //webserver.DoneCommand(commandSuccesful);
+    webServer.DoneNoData(commandSuccesful);
 }
 
 void HandleWeatherPrediction(object sender, WeatherData theData)
@@ -138,7 +131,7 @@ void HandleWeatherPrediction(object sender, WeatherData theData)
     thePrediction = MakePrediction(theHistoricalData, theData);
 
 
-    //webserver.DoneWeatherCommand(commandSuccesful, thePrediction);
+    webServer.ReturnPrediction(thePrediction);
 }
 
 
