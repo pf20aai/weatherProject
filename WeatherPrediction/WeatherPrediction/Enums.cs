@@ -87,8 +87,11 @@ namespace WeatherPrediction
         GetWeatherData,
         PostLogin,
         PostSignUp,
+        PostSignOut,
         PostPredict,
         PostWeatherData,
-        PutWeatherData
+        PutWeatherData,
+        DeleteUserData,
+        DeleteWeatherData
     }
 }

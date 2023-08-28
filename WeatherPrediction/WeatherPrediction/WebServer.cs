@@ -123,13 +123,17 @@ namespace WeatherPrediction
                 }
                 SendHttpResponse((int)HttpStatusCode.OK, fullWeatherString);
             }
-            SendNotFoundResponse();
+            else
+            {
+                SendNotFoundResponse();
+            }
             StoppingCommand();
         }
 
-        public void ReturnPrediction(string prediction)
+        public void ReturnPrediction(DataWeatherPrediction prediction)
         {
-            SendHttpResponse((int)HttpStatusCode.OK, prediction);
+            string stringPrediction = FormatWeatherPredctionIntoHtmlString(prediction);
+            SendHttpResponse((int)HttpStatusCode.OK, stringPrediction);
             StoppingCommand();
         }
 
@@ -224,6 +228,17 @@ namespace WeatherPrediction
             userDataString += $"\nUser permissions: {userData.permissions}";
 
             return userDataString;
+        }
+
+        static string FormatWeatherPredctionIntoHtmlString(DataWeatherPrediction prediction)
+        {
+            string predictionString = "";
+
+
+            predictionString += $"\nCurrent prediction: {prediction.currentPredicted}";
+            predictionString += $"\nFuture prediction: {prediction.futurePredicted}";
+
+            return predictionString;
         }
 
 
@@ -391,6 +406,14 @@ namespace WeatherPrediction
             PredictWeatherEvent?.Invoke(this, data);
         }
 
+        void PostSignOutPath(HttpListenerRequest req)
+        {
+            StartingCommand(requestTypes.PostSignOut);
+            isAdmin = false;
+            isAuthenticated = false;
+            StoppingCommand();
+        }
+
         public void Main()
         {
             using var listener = new HttpListener();
@@ -422,7 +445,6 @@ namespace WeatherPrediction
                                     try
                                     {
                                         county = req.QueryString["county"];
-                                        Console.WriteLine(county);
                                     }
                                     catch
                                     {
@@ -438,8 +460,6 @@ namespace WeatherPrediction
                                         }
                                         catch
                                         {
-
-                                            //TODO PF Semi works causes failure 
                                             SendNotFoundResponse();
                                             StoppingCommand();
                                         }
@@ -481,6 +501,10 @@ namespace WeatherPrediction
                                     StartingCommand(requestTypes.PostWeatherData);
                                     AddWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
                                 }
+                                else if (req.Url.AbsolutePath == "/signout")
+                                {
+                                    PostSignOutPath(req);
+                                }
                                 else
                                 {
                                     SendNotFoundResponse();
@@ -510,9 +534,9 @@ namespace WeatherPrediction
                                     StartingCommand(requestTypes.DeleteUserData);
                                     DeleteUserDataEvent?.Invoke(this, SeperateHtmlIntoUserData(GetRequestData(req)));
                                 }
-                                else if (req.Url.AbsolutePath == "weathe-data")
+                                else if (req.Url.AbsolutePath == "weather-data")
                                 {
-                                    StartingCommand(requestTypes.DeleteUserData);
+                                    StartingCommand(requestTypes.DeleteWeatherData);
                                     DeleteWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
                                 }
                                 else {SendNotFoundResponse(); }
@@ -529,6 +553,10 @@ namespace WeatherPrediction
                                 if (req.Url.AbsolutePath == "/predict")
                                 {
                                     PostPredictPath(req);
+                                }
+                                else if (req.Url.AbsolutePath == "/signout")
+                                {
+                                    PostSignOutPath(req);
                                 }
                                 else
                                 {
