@@ -111,7 +111,8 @@ body{
 
 <h2> Please enter your current weather conditions </h2>
 
-<form action="" method="post"> <!-- Insert relevant link here -->
+<form action="http://localhost:80/predict" method="post" target="iframepredict" rel="external" id="WeatherData">
+	
 	<label for="Date"> Date:</label><br>
 	<input type="date" id="Date" name="Date"><br>
 
@@ -180,15 +181,11 @@ body{
 	<input type="number" id="Windspeed" name="Windspeed"><br>
 	<br>
 
-	<input type="submit" value="Submit">
-	</label>
+		<input type="submit" value="submit"><br>
 
-
-
-
-
-
-
+</label>
+</form>
+<iframe id="iframepredict" name="iframepredict"></iframe>
 </div>
 </body>
 </html>

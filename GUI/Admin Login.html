@@ -1,0 +1,189 @@
+<!-- Admin Log In -->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale 1.0">
+
+<!-- Admin Log In Page Title -->	
+	<title>
+		Admin Log in
+	</title>
+
+<style>
+body{
+	font-family: 'Trebuchet MS', sans-serif;  /* Makes all content in this font */
+}
+
+/* Margins for the whole page to make it more mobile friendly*/
+.page {
+	margin:0 auto;
+	width:960px;
+}
+
+/* Menu Image */
+.menu-image{
+	background-image: url("Banner.fw.png");
+	min-height: 180px;                        /* Changed height to save space */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	position: relative;
+}
+
+/* Background colour for Nav bar */
+.navbar {
+  background-color: #333; /* Nav bar colour */
+  overflow: hidden;
+}
+/* Styles for the links */
+.navbar a {
+  float: left;
+  color: white; /*Text colour for page links*/
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px; 
+}
+
+/* When a user hovers their cursor over the button */
+.navbar a:hover{
+	background-color:#FFBB00; /*Hover background colour*/
+	color: #56595B; /* Hover text colour */
+}
+
+/*Colours for currently selected page */
+.navbar a.active {
+	background-color:#63CDEB; /*Colour for active page */
+	color: black; /* Text colour when active page */
+}
+
+/* To put the sign up/login button on the right of the page */
+.navbar-right {
+	float: right;
+}
+
+/* Login form */
+/* Input type */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #56595B;
+  box-sizing: border-box;
+}
+
+/* Style for the buttons */
+button {
+  background-color: #FFBB00;  /* Color of button */
+  color: black;               /* Color of text */
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Cancel button */
+.cancel-button {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+  border-style:outset;
+}
+
+/* Admin button */
+.admin-button {
+  width: auto;
+  padding: 10px 18px;
+  background-color:#FFBB00 ;
+  border-style:outset;
+}
+
+/* Center the image and position the close button */
+.image-container {
+  text-align: center;
+  margin: 24px 0 12px 0;
+}
+
+img.company-logo {
+  width: 20%;
+}
+
+/* Includes the cancel button and sign in button */
+.options-menu {
+  padding: 16px;
+  border-style:solid;
+
+}
+
+  /* For a user to be taken to the create an account page */
+span.sign-in {         
+	float: right;
+	padding-top: 16px;
+}
+
+.title { 
+	text-align: center;
+	margin:90px;
+	font-size: 50px;
+}
+
+/* style changes for mobile devices */ 
+@media screen and (max-width 350px) {
+	span.sign-in {
+		display:block;
+		float: none;
+	}
+
+</style>
+</head>
+
+
+<!-- Start of displayed content -->
+<!-- Page background colour -->
+<body style="background-color:#C1F2FF;"> 
+
+<!-- Makes the page centered and shorter -->	
+<div class="page">
+
+<!-- Navigation Bar -->
+<div class="menu-image">	
+		<div class="navbar"> 
+		  <a  href="Home Page.html">Home</a> <!-- Home Page Button/Link -->
+		  <div class="navbar-right">
+		      <a class="active" href="Login.html">Sign Up/Login</a><!-- Sign up Page Button/Lin, pushes to the right -->
+		  </div>
+  </div>
+  <div class="title">Admin Login</div>
+</div>
+
+<!-- Login content-->
+<h2 style="text-align: center;">Please enter your login details </h2>
+<form action="http://localhost:80/login" method="post">  <!-- will need to change the .php file name to what we use -->
+	<div class="image-container">
+		<img src="Company Logo.png" alt="Login logo" class="company-logo">
+	</div>
+
+<div class="options-menu">
+	<label for="UserID"><b>Username</b></label>
+	<input type="text" placeholder="Enter your Administrator Username" id="UserID" name="UserID" required>
+
+	<label for="password"><b>Password</b></label>
+	<input type="password" placeholder="Enter your Administrator Password" name="password" required> <!-- Input type is "password" so that it is not displayed in plaintext -->
+
+<a href="User Dashboard.html">
+	<button type="submit">Login</button> <!-- If valid account details are used, this will take the user to the relevant page -->
+</a>
+</div>
+
+<!-- Options if User cant login -->
+<div class="options-menu" style="background-color: #f1f1f1">
+	<a href="Login.html">
+	<button type="button" class="cancel-button">Not an Admin?</button> <!-- If clicked, will take the user back to the Login page -->
+</a>
+</div>
+</body>
+</html>
+
+

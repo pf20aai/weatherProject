@@ -12,6 +12,7 @@
 
 <style>
 	
+
 body{
 	font-family: 'Trebuchet MS', sans-serif;  /* Makes all content in this font */
 }
@@ -94,7 +95,7 @@ body{
 <body style="background-color:#C1F2FF;"> <!-- Page background colour -->
 
 <!-- Makes the page centered and shorter -->
-<div class="page">
+<div class="page"> 
 
 <div class="menu-image">	
 		<div class="navbar"> 
@@ -112,7 +113,8 @@ body{
 
 <h2> Please enter your current weather conditions </h2>
 
-<form action="http://localhost:80/predict" method="post" target="iframepredict" rel="external">
+<form action="http://localhost:80/predict" method="post" target="iframepredict" rel="external" id="WeatherData">
+	
 	<label for="Date"> Date:</label><br>
 	<input type="date" id="Date" name="Date"><br>
 
@@ -179,13 +181,15 @@ body{
 
 	<label for="Windspeed">Windspeed:</label><br>
 	<input type="number" id="Windspeed" name="Windspeed"><br>
-	<input type="submit" value="submit">
+	<br>
+
+		<input type="submit" value="submit"><br>
 
 </label>
 </form>
-<iframe id="iframepredict" name="iframepredict" ></iframe>
-
-
+<iframe id="iframepredict" name="iframepredict"></iframe>
 </div>
 </body>
 </html>
+
+
