@@ -1,16 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "kM8Z5LqiBtNxjw/MZunN7DZ8KbkSIGnc5nd78hvOF6VjQgkN/TeZSIbImS03xkPzGMUaGdzXUL3EjdIm7T4nng==",
+  "dgSpecHash": "6BONrPRilLBHj8zk2SRepeqDVulyqM1Uolr7XSfEJGrbQj+cjac80SF5PNHHDWhh+qoqjNLhyne+w/UjjtkEBw==",
   "success": true,
-  "projectFilePath": "C:\\Dev\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
+  "projectFilePath": "C:\\Users\\CamLe\\Documents\\Git\\New folder\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Pjc\\.nuget\\packages\\microsoft.data.sqlite\\7.0.9\\microsoft.data.sqlite.7.0.9.nupkg.sha512",
-    "C:\\Users\\Pjc\\.nuget\\packages\\microsoft.data.sqlite.core\\7.0.9\\microsoft.data.sqlite.core.7.0.9.nupkg.sha512",
-    "C:\\Users\\Pjc\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.4\\sqlitepclraw.bundle_e_sqlite3.2.1.4.nupkg.sha512",
-    "C:\\Users\\Pjc\\.nuget\\packages\\sqlitepclraw.core\\2.1.4\\sqlitepclraw.core.2.1.4.nupkg.sha512",
-    "C:\\Users\\Pjc\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.4\\sqlitepclraw.lib.e_sqlite3.2.1.4.nupkg.sha512",
-    "C:\\Users\\Pjc\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\2.1.4\\sqlitepclraw.provider.e_sqlite3.2.1.4.nupkg.sha512",
-    "C:\\Users\\Pjc\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512"
+    "C:\\Users\\CamLe\\.nuget\\packages\\microsoft.data.sqlite\\7.0.9\\microsoft.data.sqlite.7.0.9.nupkg.sha512",
+    "C:\\Users\\CamLe\\.nuget\\packages\\microsoft.data.sqlite.core\\7.0.9\\microsoft.data.sqlite.core.7.0.9.nupkg.sha512",
+    "C:\\Users\\CamLe\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.4\\sqlitepclraw.bundle_e_sqlite3.2.1.4.nupkg.sha512",
+    "C:\\Users\\CamLe\\.nuget\\packages\\sqlitepclraw.core\\2.1.4\\sqlitepclraw.core.2.1.4.nupkg.sha512",
+    "C:\\Users\\CamLe\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.4\\sqlitepclraw.lib.e_sqlite3.2.1.4.nupkg.sha512",
+    "C:\\Users\\CamLe\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\2.1.4\\sqlitepclraw.provider.e_sqlite3.2.1.4.nupkg.sha512",
+    "C:\\Users\\CamLe\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512"
   ],
   "logs": []
 }
