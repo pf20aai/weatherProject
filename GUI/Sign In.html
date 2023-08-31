@@ -164,7 +164,7 @@ button:hover {
 </div>
 
 <!-- Sign Up form -->
-<form action="http://localhost:80/signup" method="post" rel="external" id="WeatherData" style="border:1px solid black">
+<form action="http://localhost:80/signup" method="post" rel="nofollow" id="weatherData" style="border:1px solid black">
 	<div class="signup-container">
 		<h1>Sign Up</h1>
 		<p> Please enter your details to create and account </p>
@@ -186,11 +186,12 @@ button:hover {
 	<a href="Home Page.html">
 	<button type="button" class="cancel-button"> Cancel</button> <!-- If pressed, will take the user back to the home page -->
 	</a>
-	<a href= "Sign Up Confirmation.html">
-	<button type="submit" value="submit" class="signup-button">Sign Up</button> <!-- When pressed, User will be taken to a confirmation message page and then asked to login -->
-	</a>
-</div>
+	
+	<button type="submit" value="submit" class="signup-button" onclick="window.open('Sign Up Confirmation.html')";>Sign Up</button> <!-- When pressed, User will be taken to a confirmation message page and then asked to login -->
+
+	</div>
 </div>
 </form>
+
 </body>
 </html>

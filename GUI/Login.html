@@ -167,14 +167,12 @@ span.sign-in {
 
 <div class="options-menu">
 	<label for="userName"><b>Username</b></label>
-	<input type="text" placeholder="Enter your Username" id="userName" name="UserID" required>
+	<input type="text" placeholder="Enter your Username" id="userName" name="userName" required>
 
 	<label for="password"><b>Password</b></label>
 	<input type="password" placeholder="Enter your Password" name="password" required> <!-- Input type is "password" so that it is not displayed in plaintext -->
 
-<a href="User Dashboard.html">
-	<button type="submit">Login</button> <!-- If valid account details are used, this will take the user to the relevant page -->
-</a>
+	<button type="submit" onclick="window.open('User Dashboard.html')";>Login</button> <!-- If valid account details are used, this will take the user to the relevant page -->
 </div>
 
 <!-- Options if User cant login -->

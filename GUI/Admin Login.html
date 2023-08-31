@@ -166,14 +166,14 @@ span.sign-in {
 	</div>
 
 <div class="options-menu">
-	<label for="UserID"><b>Username</b></label>
-	<input type="text" placeholder="Enter your Administrator Username" id="UserID" name="UserID" required>
+	<label for="userName"><b>Username</b></label>
+	<input type="text" placeholder="Enter your Administrator Username" id="userName" name="userName" required>
 
 	<label for="password"><b>Password</b></label>
 	<input type="password" placeholder="Enter your Administrator Password" name="password" required> <!-- Input type is "password" so that it is not displayed in plaintext -->
 
-<a href="User Dashboard.html">
-	<button type="submit">Login</button> <!-- If valid account details are used, this will take the user to the relevant page -->
+<a href="Admin Dashboard.html">
+	<button type="submit" onclick="window.open('Admin Dashboard.html')";>Login</button> <!-- If valid account details are used, this will take the user to the relevant page -->
 </a>
 </div>
 
