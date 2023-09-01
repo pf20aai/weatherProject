@@ -1,12 +1,12 @@
-<!-- Log In -->
+<!-- Admin Log In -->
 <!DOCTYPE HTML>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale 1.0">
 
-<!-- Log In Page Title -->	
+<!-- Admin Log In Page Title -->	
 	<title>
-		Log in
+		Admin Log in
 	</title>
 
 <style>
@@ -155,7 +155,7 @@ span.sign-in {
 		      <a class="active" href="Login.html">Sign Up/Login</a><!-- Sign up Page Button/Lin, pushes to the right -->
 		  </div>
   </div>
-  <div class="title">User Login</div>
+  <div class="title">Admin Login</div>
 </div>
 
 <!-- Login content-->
@@ -167,24 +167,20 @@ span.sign-in {
 
 <div class="options-menu">
 	<label for="userName"><b>Username</b></label>
-	<input type="text" placeholder="Enter your Username" id="userName" name="userName" required>
+	<input type="text" placeholder="Enter your Administrator Username" id="userName" name="userName" required>
 
 	<label for="password"><b>Password</b></label>
-	<input type="password" placeholder="Enter your Password" name="password" required> <!-- Input type is "password" so that it is not displayed in plaintext -->
+	<input type="password" placeholder="Enter your Administrator Password" name="password" required> <!-- Input type is "password" so that it is not displayed in plaintext -->
 
-	<button type="submit" onclick="window.open('User Dashboard.html')";>Login</button> <!-- If valid account details are used, this will take the user to the relevant page -->
+<a href="Admin Dashboard.html">
+	<button type="submit" onclick="window.open('Admin Dashboard.html')";>Login</button> <!-- If valid account details are used, this will take the user to the relevant page -->
+</a>
 </div>
 
 <!-- Options if User cant login -->
 <div class="options-menu" style="background-color: #f1f1f1">
-	<a href="Home Page.html">
-	<button type="button" class="cancel-button">Cancel</button> <!-- If clicked, will take the user back to the homepage -->
-</a>
-<a href="Admin Login.html">
-	<button type="button" class="admin-button">Admin Login</button> <!-- If clicked, the user can sign in as an Admin -->
-</a>
-<a href="Sign In.html">
-<span class="sign-in" style="color:blue">Dont have an account?<br>Click Here</span> <!-- If clicked will take them to the Sign In page -->
+	<a href="Login.html">
+	<button type="button" class="cancel-button">Not an Admin?</button> <!-- If clicked, will take the user back to the Login page -->
 </a>
 </div>
 </body>

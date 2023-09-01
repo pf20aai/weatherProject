@@ -1,12 +1,12 @@
-<!-- Weather Input (Admin) Page -->
+<!-- Edit Weather Database Page -->
 <!DOCTYPE HTML>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale 1.0">
 
-<!-- Weather Input (Admin) Page Title -->	
+<!-- Edit Weather Database Page Title -->	
 	<title>
-		Weather Input
+		Edit Weather Database
 	</title>
 
 <style>
@@ -75,6 +75,8 @@ body{
 	font-size: 50px;
 }
 
+/* New style Content here /*
+
 /* style changes for mobile devices */ 
 @media screen and (max-width 350px) {
 	span.sign-in {
@@ -96,22 +98,19 @@ body{
 <div class="menu-image">	
 		<div class="navbar"> 
 		  <a href="Admin Dashboard.html">Admin Dashboard</a> <!-- Admin Dashboard Home Page Button/Link -->
-		  <a class="active" href="Weather Input-admin.html">Input Data</a>
+		  <a href="Weather Input-admin.html">Input Data</a>
 		  <a href="Historic Data-admin.html">History</a>
-		  <a href="Admin Database Access.html">Database</a>
+		  <a class="active" href="Admin Database Access.html">Database</a>
 		  <a href="Account Database.html">Users</a>
 		  <div class="navbar-right">
 		  	<a href="WIP.html">My Account</a><!-- Future update, add edit options to a user's profile -->
 		      <a href="Home Page.html">Logout</a><!-- Home Button/Link -->
 		  </div>
-
   </div>
-  <div class="title">Weather Input</div> 
+  <div class="title">Edit Weather Database</div> 
 </div>
 
-<h2> Please enter your current weather conditions </h2>
-
-<form action="http://localhost:80/predict" method="post" target="iframepredict" rel="external" id="weatherData">
+<form action="http://localhost:80/predict" method="put" target="iframepredict" rel="external" id="weatherData">
 	
 	<label for="date"> Date:</label><br>
 	<input type="date" id="date" name="date"><br>
@@ -177,15 +176,13 @@ body{
 	<label for="humidity">Humidity:</label><br>
 	<input type="number" id="humidity" name="humidity"><br>
 
-	<label for="Windspeed">Windspeed:</label><br>
-	<input type="number" id="windspeed" name="windspeed"><br>
+	<label for="windSpeed">Windspeed:</label><br>
+	<input type="number" id="windSpeed" name="windSpeed"><br>
 	<br>
 
 		<input type="submit" value="Submit"><br>
 
-</label>
-</form>
-<iframe id="iframepredict" name="iframepredict"></iframe>
+
 </div>
 </body>
 </html>

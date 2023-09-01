@@ -1,6 +1,8 @@
 ﻿using Microsoft.Data.Sqlite;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -39,7 +41,13 @@ namespace WeatherPrediction
 
         public event EventHandler<EventArgs> GetAllUsersEvent;
 
-        // methods
+        public event EventHandler<Counties> GetWeatherDataEvent;
+
+        public event EventHandler<UserData> DeleteUserDataEvent;
+
+        public event EventHandler<WeatherData> DeleteWeatherDataEvent;
+
+        // Methods
 
         // Event methods
         public void AuthenticateUser(AuthenticationData authenticationData)
@@ -103,15 +111,35 @@ namespace WeatherPrediction
             StoppingCommand();
         }
 
-        public void returnPrediction(WeatherData weatherData)
+        public void DoneCommandWithWeatherData(bool commandSuccessful, List<WeatherData> weatherDataList)
         {
-            string prediction = FormatWeatherDataIntoHtmlString(weatherData);
+            if (commandSuccessful)
+            {
+                string fullWeatherString = "";
 
-            SendHttpResponse((int)HttpStatusCode.OK, prediction);
+                foreach (WeatherData weatherData in weatherDataList)
+                {
+                    fullWeatherString += FormatWeatherDataEntryIntoHtmlString(weatherData);
+                }
+                SendHttpResponse((int)HttpStatusCode.OK, fullWeatherString);
+            }
+            else
+            {
+                SendNotFoundResponse();
+            }
+            StoppingCommand();
+        }
+
+        public void ReturnPrediction(DataWeatherPrediction prediction)
+        {
+            string stringPrediction = FormatWeatherPredctionIntoHtmlString(prediction);
+            SendHttpResponse((int)HttpStatusCode.OK, stringPrediction);
             StoppingCommand();
         }
 
         // Webserver methods
+
+        // Set or un-set server busy flags
         void StartingCommand(requestTypes requestType)
         {
             this.lastRequest = requestType;
@@ -124,6 +152,7 @@ namespace WeatherPrediction
             this.runningCommand = false;
         }
 
+        // Manage requests
         void SendHttpResponse(int statusCode, string data = "")
         {
             using HttpListenerResponse resp = this.context.Response;
@@ -159,34 +188,10 @@ namespace WeatherPrediction
             return (requestData);
         }
 
-        static string RetrieveWeatherData(string county = "")
-        {
-            var countys = new List<string>()
-        {
-            "devon",
-            "cornwall"
-        };
-            if (county != "")
-            {
-                if (countys.Contains(county.ToLower()))
-                {
-                    Console.WriteLine($"Get data for {county}");
-                    return ($"Data for {county}");
-                }
-                else
-                {
-                    Console.WriteLine($"Couldn't find {county}");
-                    return ("not found");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Get weather data");
-                return ("Weather data here");
-            }
-        }
+        // Format data
 
-        static string FormatWeatherDataIntoHtmlString(WeatherData weatherData)
+        // Format data: to string for returning response
+        static string FormatWeatherDataIntoHtmlString(WeatherData weatherData) // Depricated
         {
             string weatherDataString = "";
 
@@ -208,6 +213,13 @@ namespace WeatherPrediction
             return userDataString;
         }
 
+        static string FormatWeatherDataEntryIntoHtmlString(WeatherData weatherData)
+        {
+            string weatherEntryString = "";
+            weatherEntryString = $"\nReporter: {weatherData.reporterId}, Temperature: {weatherData.temperature}, Pressure: {weatherData.pressure}, Humidity: {weatherData.humidity}, Wind Speed: {weatherData.windSpeed}, Date: {weatherData.date}, County: {weatherData.county}, Conditions: {weatherData.WeatherCondition}";
+            return weatherEntryString;
+        }
+
         static string FormatCommandUserDataIntoHtmlString(UserDataDoneCommand userData)
         {
             string userDataString = "";
@@ -218,6 +230,19 @@ namespace WeatherPrediction
             return userDataString;
         }
 
+        static string FormatWeatherPredctionIntoHtmlString(DataWeatherPrediction prediction)
+        {
+            string predictionString = "";
+
+
+            predictionString += $"\nCurrent prediction: {prediction.currentPredicted}";
+            predictionString += $"\nFuture prediction: {prediction.futurePredicted}";
+
+            return predictionString;
+        }
+
+
+        // Format data: Seperate HTML response
         static List<List<string>> SeperateHtmlReponseIntoKeyPairs(string data)
         {
             List<List<string>> seperatedKeyPairs = new List<List<string>>();
@@ -231,6 +256,7 @@ namespace WeatherPrediction
             return seperatedKeyPairs;
         }
 
+        // Format data: Format data into classes
         static WeatherData SeperateHtmlIntoWeatherData(string data)
         {
             WeatherData weatherData = new WeatherData();
@@ -371,6 +397,23 @@ namespace WeatherPrediction
 
         }
 
+        // Multiple use requests
+        void PostPredictPath(HttpListenerRequest req)
+        {
+            StartingCommand(requestTypes.PostPredict);
+            WeatherData data = SeperateHtmlIntoWeatherData(GetRequestData(req));
+
+            PredictWeatherEvent?.Invoke(this, data);
+        }
+
+        void PostSignOutPath(HttpListenerRequest req)
+        {
+            StartingCommand(requestTypes.PostSignOut);
+            isAdmin = false;
+            isAuthenticated = false;
+            StoppingCommand();
+        }
+
         public void Main()
         {
             using var listener = new HttpListener();
@@ -398,15 +441,36 @@ namespace WeatherPrediction
                                 if (req.Url.AbsolutePath == "/weather-data")
                                 {
                                     StartingCommand(requestTypes.GetWeatherData);
-                                    string data = RetrieveWeatherData();
-                                    SendHttpResponse((int)HttpStatusCode.OK, data);
-                                }
-                                else if (req.Url.AbsolutePath == "/weather-data/county")
-                                {
-                                    StartingCommand(requestTypes.GetWeatherData);
-                                    string county = req.QueryString["county"];
-                                    string data = RetrieveWeatherData(county);
-                                    SendHttpResponse((int)HttpStatusCode.OK, data);
+                                    string county = "";
+                                    try
+                                    {
+                                        county = req.QueryString["county"];
+                                    }
+                                    catch
+                                    {
+                                        SendHttpResponse((int)HttpStatusCode.BadRequest, "No County Request");
+                                    }
+                                    
+                                    if (county != "")
+                                    {
+                                        try
+                                        {
+                                            Counties countyEnum = (Counties)Enum.Parse(typeof(Counties), county);
+                                            GetWeatherDataEvent?.Invoke(this, countyEnum);
+                                        }
+                                        catch
+                                        {
+                                            SendNotFoundResponse();
+                                            StoppingCommand();
+                                        }
+                                        
+                                    }
+                                    else
+                                    {
+                                        SendNotFoundResponse();
+                                        StoppingCommand();
+                                    }
+                                    
                                 }
                                 else if (req.Url.AbsolutePath == "/user")
                                 {
@@ -430,15 +494,16 @@ namespace WeatherPrediction
                             {
                                 if (req.Url.AbsolutePath == "/predict")
                                 {
-                                    StartingCommand(requestTypes.PostPredict);
-                                    WeatherData data = SeperateHtmlIntoWeatherData(GetRequestData(req));
-
-                                    PredictWeatherEvent?.Invoke(this, data);
+                                    PostPredictPath(req);
                                 }
-                                else if (req.Url.AbsolutePath == "/weather-data")  //need admin auth here
+                                else if (req.Url.AbsolutePath == "/weather-data")
                                 {
                                     StartingCommand(requestTypes.PostWeatherData);
                                     AddWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
+                                }
+                                else if (req.Url.AbsolutePath == "/signout")
+                                {
+                                    PostSignOutPath(req);
                                 }
                                 else
                                 {
@@ -447,13 +512,12 @@ namespace WeatherPrediction
                             }
                             else if (req.HttpMethod == "PUT")
                             {
-                                if (req.Url.AbsolutePath == "weather-data")
+                                if (req.Url.AbsolutePath == "/weather-data")
                                 {
-                                    // PF put isn't working right now
                                     StartingCommand(requestTypes.PutWeatherData);
                                     UpdateWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
                                 }
-                                else if (req.Url.AbsolutePath == "users")
+                                else if (req.Url.AbsolutePath == "/users")
                                 {
                                     StartingCommand(requestTypes.PutWeatherData);
                                     UpdateUserDataEvent?.Invoke(this, SeperateHtmlIntoUserData(GetRequestData(req)));
@@ -462,6 +526,20 @@ namespace WeatherPrediction
                                 {
                                     SendNotFoundResponse();
                                 }
+                            }
+                            else if (req.HttpMethod == "DELETE")
+                            {
+                                if (req.Url.AbsolutePath == "/user")
+                                {
+                                    StartingCommand(requestTypes.DeleteUserData);
+                                    DeleteUserDataEvent?.Invoke(this, SeperateHtmlIntoUserData(GetRequestData(req)));
+                                }
+                                else if (req.Url.AbsolutePath == "weather-data")
+                                {
+                                    StartingCommand(requestTypes.DeleteWeatherData);
+                                    DeleteWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
+                                }
+                                else {SendNotFoundResponse(); }
                             }
                             else
                             {
@@ -474,10 +552,11 @@ namespace WeatherPrediction
                             {
                                 if (req.Url.AbsolutePath == "/predict")
                                 {
-                                    StartingCommand(requestTypes.PostPredict);
-                                    WeatherData data = SeperateHtmlIntoWeatherData(GetRequestData(req));
-
-                                    PredictWeatherEvent?.Invoke(this, data);
+                                    PostPredictPath(req);
+                                }
+                                else if (req.Url.AbsolutePath == "/signout")
+                                {
+                                    PostSignOutPath(req);
                                 }
                                 else
                                 {
