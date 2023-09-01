@@ -41,6 +41,8 @@ namespace WeatherPrediction
 
         public event EventHandler<EventArgs> GetAllUsersEvent;
 
+        public event EventHandler<EventArgs> GetAllAdminsEvent;
+
         public event EventHandler<Counties> GetWeatherDataEvent;
 
         public event EventHandler<UserData> DeleteUserDataEvent;
@@ -482,8 +484,42 @@ namespace WeatherPrediction
                                 else if (req.Url.AbsolutePath == "/users")
                                 {
                                     StartingCommand(requestTypes.GetWeatherData);
-                                    EventArgs e = new EventArgs(); 
-                                    GetAllUsersEvent?.Invoke(this, e);
+                                    string permissionType = "";
+                                    try
+                                    {
+                                        permissionType = req.QueryString["Users"];
+                                    }
+                                    catch
+                                    {
+                                        SendHttpResponse((int)HttpStatusCode.BadRequest, "No Permission Type");
+                                    }
+
+                                    if (permissionType != "")
+                                    {
+                                        if (permissionType == "Users")
+                                        {
+                                            EventArgs e = new EventArgs();
+                                            GetAllUsersEvent?.Invoke(this, e);
+                                        }
+                                        else if (permissionType == "Admins")
+                                        {
+                                            EventArgs e = new EventArgs();
+                                            GetAllAdminsEvent?.Invoke(this, e);
+                                        }
+                                        else
+                                        {
+                                            SendNotFoundResponse();
+                                            StoppingCommand();
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        SendNotFoundResponse();
+                                        StoppingCommand();
+                                    }
+
+                                    
                                 }
                                 else
                                 {
