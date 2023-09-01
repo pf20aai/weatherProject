@@ -99,7 +99,6 @@ body{
 		<div class="navbar"> 
 		  <a href="Admin Dashboard.html">Admin Dashboard</a> <!-- Admin Dashboard Home Page Button/Link -->
 		  <a href="Weather Input-admin.html">Input Data</a>
-		  <a href="Historic Data-admin.html">History</a>
 		  <a class="active" href="Admin Database Access.html">Database</a>
 		  <a href="Account Database.html">Users</a>
 		  <div class="navbar-right">
@@ -110,10 +109,15 @@ body{
   <div class="title">Edit Weather Database</div> 
 </div>
 
-<form action="http://localhost:80/predict" method="put" target="iframepredict" rel="external" id="weatherData">
+<form action="http://localhost:80/update-weather-data" method="post" target="iframepredict" rel="external" id="weatherData">
 	
+
+	<label for="reporterID"> ReporterID:</label><br>
+	<input type="text" id="ReporterID" name="ReporterID"><br>
+
+
 	<label for="date"> Date:</label><br>
-	<input type="date" id="date" name="date"><br>
+	<input type="integer" id="date" name="date"><br>
 
  	<label for="county">County:</label><br>
 		<select id="county" name="county">
