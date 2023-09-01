@@ -17,7 +17,8 @@ webServer.GetUserEvent += new EventHandler<UserData>(HandleGetSingleUserProfile)
 webServer.GetWeatherDataEvent += new EventHandler<Counties>(HandleReadWeatherDataSetFromDatabase);
 webServer.DeleteUserDataEvent += new EventHandler<UserData>     (HandleRemoveUserDataFromDatabase);
 webServer.DeleteWeatherDataEvent += new EventHandler<WeatherData>  (HandleRemoveWeatherDataFromDatabase);
-webServer.GetAllUsersEvent += new EventHandler<EventArgs> (HandleReadAllUserDataFromDatabase);
+//webServer.GetAllUsersEvent += new EventHandler<EventArgs> (HandleReadAllUserDataFromDatabase);
+//webServer.GetAllAdminsEvent += new EventHandler<EventArgs> (HandleReadAllAdminDataFromDatabase);
 webServer.Main();
 
 /// <summary>
@@ -27,14 +28,25 @@ webServer.Main();
 /// 
 /// </summary>
 
-
 void HandleUserLogin(object sender, UserData userData)
 {
-    //PF Sam something here needs to be done to check if the user is authnticated correctly
-    //SB: Yes we need to check who the user is, see what their permission is and then we will return this to you
-    AuthenticationData authenticationData = new AuthenticationData(); // placeholder
-    authenticationData.isAuthenticated = true;
-    authenticationData.isAdmin = true;
+    UserData dbUserData = databaseInterface.ReadSingleUserDataFromDatabase(userData.userName);
+    AuthenticationData authenticationData = new AuthenticationData();
+    if (dbUserData.permissions == 0)
+    {
+        authenticationData.isAuthenticated = true;
+        authenticationData.isAdmin = false;
+    }
+    else if(dbUserData.permissions == 1)
+    {
+        authenticationData.isAuthenticated = true;
+        authenticationData.isAdmin = true;
+    }
+    else
+    {
+        authenticationData.isAuthenticated = false;
+        authenticationData.isAdmin = false;
+    }
     webServer.AuthenticateUser(authenticationData);
 }
 
@@ -91,12 +103,39 @@ void HandleGetSingleUserProfile(object sender, UserData theData)
 void HandleReadAllUserDataFromDatabase(object sender, EventArgs e)
 {
     bool commandSuccesful = false;
-    List<UserData> theData = databaseInterface.ReadAllUserDataFromDatabase();
-    if (theData != null)
+    List<UserData> allUserData = databaseInterface.ReadAllUserDataFromDatabase();
+    List<UserData> users = new List<UserData>();
+    foreach (UserData userData in allUserData)
+    {
+        if(userData.permissions == 0)
+        {
+            users.Add(userData);
+        }
+    }
+    if (users.Count > 0)
     {
         commandSuccesful = true;
     }
-    webServer.DoneWithUserDataList(commandSuccesful, theData);
+    webServer.DoneWithUserDataList(commandSuccesful, users);
+}
+
+void HandleReadAllAdminDataFromDatabase(object sender, EventArgs e)
+{
+    bool commandSuccesful = false;
+    List<UserData> allUserData = databaseInterface.ReadAllUserDataFromDatabase();
+    List<UserData> admins = new List<UserData>();
+    foreach (UserData userData in allUserData)
+    {
+        if (userData.permissions == 1)
+        {
+            admins.Add(userData);
+        }
+    }
+    if (admins.Count > 0)
+    {
+        commandSuccesful = true;
+    }
+    webServer.DoneWithUserDataList(commandSuccesful, admins);
 }
 
 void HandleReadWeatherDataSetFromDatabase(object sender, Counties county)

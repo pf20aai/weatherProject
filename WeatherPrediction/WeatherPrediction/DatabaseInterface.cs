@@ -469,6 +469,8 @@ namespace WeatherPrediction
                 //sqlite_cmd.CommandText = "INSERT INTO " + userTable + "(Username, Password, Permission) VALUES('TestUser' , 'Password1', 0); ";
                 //sqlite_cmd.ExecuteNonQuery();
 
+                //SB: now 1693554627 (1st September 9am)
+
                 SqliteCommand sqlite_cmd;
                 sqlite_cmd = conn.CreateCommand();
                 sqlite_cmd.CommandText = "INSERT INTO " + weatherTable + "(Reporter, Temperature, Pressure, Humidity, Windspeed, Date, County, Condition) VALUES('TestAdmin1', 21.1, 1002.1, 74, 5.1, 1691743250, '12', '0'); ";
