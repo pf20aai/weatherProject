@@ -541,19 +541,12 @@ namespace WeatherPrediction
                                 {
                                     PostSignOutPath(req);
                                 }
-                                else
-                                {
-                                    SendNotFoundResponse();
-                                }
-                            }
-                            else if (req.HttpMethod == "PUT")
-                            {
-                                if (req.Url.AbsolutePath == "/weather-data")
+                                else if (req.Url.AbsolutePath == "/update-weather-data")
                                 {
                                     StartingCommand(requestTypes.PutWeatherData);
                                     UpdateWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
                                 }
-                                else if (req.Url.AbsolutePath == "/users")
+                                else if (req.Url.AbsolutePath == "/update-users")
                                 {
                                     StartingCommand(requestTypes.PutWeatherData);
                                     UpdateUserDataEvent?.Invoke(this, SeperateHtmlIntoUserData(GetRequestData(req)));
