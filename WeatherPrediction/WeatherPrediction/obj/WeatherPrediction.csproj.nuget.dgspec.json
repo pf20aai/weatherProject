@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Dev\\git\\weatherProject\\Docs\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj": {}
+    "N:\\Weather App Site\\Git\\weatherProject\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj": {}
   },
   "projects": {
-    "C:\\Dev\\git\\weatherProject\\Docs\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj": {
+    "N:\\Weather App Site\\Git\\weatherProject\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Dev\\git\\weatherProject\\Docs\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
+        "projectUniqueName": "N:\\Weather App Site\\Git\\weatherProject\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
         "projectName": "WeatherPrediction",
-        "projectPath": "C:\\Dev\\git\\weatherProject\\Docs\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
-        "packagesPath": "C:\\Users\\Pjc\\.nuget\\packages\\",
-        "outputPath": "C:\\Dev\\git\\weatherProject\\Docs\\weatherProject\\WeatherPrediction\\WeatherPrediction\\obj\\",
+        "projectPath": "N:\\Weather App Site\\Git\\weatherProject\\weatherProject\\WeatherPrediction\\WeatherPrediction\\WeatherPrediction.csproj",
+        "packagesPath": "C:\\Users\\davidsca\\.nuget\\packages\\",
+        "outputPath": "N:\\Weather App Site\\Git\\weatherProject\\weatherProject\\WeatherPrediction\\WeatherPrediction\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Pjc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\USERDATA\\davidsca\\Application Data\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -61,7 +61,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }
