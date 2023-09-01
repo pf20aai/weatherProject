@@ -72,7 +72,7 @@ namespace WeatherPrediction
         {
             if (isDone)
             {
-                SendHttpResponse((int)HttpStatusCode.OK);
+                SendHttpResponse((int)HttpStatusCode.OK, "Success");
             }
             else 
             { 
@@ -107,10 +107,14 @@ namespace WeatherPrediction
                     fullUserDataString += FormatUserDataIntoHtmlString(user);
                 }
                 SendHttpResponse((int)(HttpStatusCode.OK), fullUserDataString);
-
+                StoppingCommand();
             }
-            SendNotFoundResponse();
-            StoppingCommand();
+            else
+            {
+                SendNotFoundResponse();
+                StoppingCommand();
+            }
+            
         }
 
         public void DoneCommandWithWeatherData(bool commandSuccessful, List<WeatherData> weatherDataList)
@@ -413,6 +417,7 @@ namespace WeatherPrediction
             StartingCommand(requestTypes.PostSignOut);
             isAdmin = false;
             isAuthenticated = false;
+            SendHttpResponse((int)HttpStatusCode.OK);
             StoppingCommand();
         }
 
