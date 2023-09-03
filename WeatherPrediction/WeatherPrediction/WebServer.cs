@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Timers;
 
 namespace WeatherPrediction
 {
@@ -21,6 +22,7 @@ namespace WeatherPrediction
         private requestTypes lastRequest = requestTypes.None;
         private bool isAuthenticated = false;
         private bool isAdmin = false;
+        private System.Timers.Timer commandTimeout = new System.Timers.Timer(5000);
 
 
         //events
@@ -52,6 +54,23 @@ namespace WeatherPrediction
         // Methods
 
         // Event methods
+
+        /// <summary>
+        /// The Timer that catches when a command took too long to complete and timed out
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        private void OnCommandTimerElapsed (Object source, ElapsedEventArgs e)
+        {
+            Console.WriteLine("Command Timed Out");
+            StoppingCommand();
+        }
+        private void stopCommandTimer()
+        {
+            commandTimeout.Stop();
+            commandTimeout = new System.Timers.Timer(5000);
+        }
+
         public void AuthenticateUser(AuthenticationData authenticationData)
         {
             if (!authenticationData.isAuthenticated)
@@ -423,6 +442,11 @@ namespace WeatherPrediction
 
         public void Main()
         {
+            //Makes sure the timer doesn't auto restart when elapsed
+            commandTimeout.AutoReset = false;
+            commandTimeout.Elapsed += OnCommandTimerElapsed;
+
+
             using var listener = new HttpListener();
             listener.Prefixes.Add("http://localhost:80/");
 
