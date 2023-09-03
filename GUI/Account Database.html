@@ -99,7 +99,6 @@ body{
 		<div class="navbar"> 
 		  <a  href="Admin Dashboard.html">Admin Dashboard</a> <!-- Admin Dashboard Home Page Button/Link -->
 		  <a href="Weather Input-admin.html">Input Data</a>
-		  <a href="Historic Data-admin.html">History</a>
 		  <a href="Admin Database Access.html">Database</a>
 		  <a class="active" href="Account Database.html">Users</a>
 		  <div class="navbar-right">
@@ -110,10 +109,17 @@ body{
   <div class="title">Account Database</div> 
 </div>
 
-<form action="http://localhost:80/users" method="get" target="iframepredict" rel="external" id="WeatherData">
+<form action="http://localhost/users" method="get" target="iframeusers" rel="external" id="WeatherData">
+
+<label for="Users">User Type:</label><br>
+        <select id="Users" name="Users">
+            <option value="Users">Users</option>
+            <option value="Admins">Admins</option>
+</select>
+    <input type="submit" value="Submit"><br>
 </form>
-	<input type="submit" value="Submit"><br>
-<iframe id="iframepredict" name="iframepredict" width="960" height="500" ></iframe>
+
+<iframe id="iframeusers" name="iframeusers" width="960" height="500" ></iframe>
 
 </div>
 </body>

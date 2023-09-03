@@ -17,8 +17,8 @@ webServer.GetUserEvent += new EventHandler<UserData>(HandleGetSingleUserProfile)
 webServer.GetWeatherDataEvent += new EventHandler<Counties>(HandleReadWeatherDataSetFromDatabase);
 webServer.DeleteUserDataEvent += new EventHandler<UserData>     (HandleRemoveUserDataFromDatabase);
 webServer.DeleteWeatherDataEvent += new EventHandler<WeatherData>  (HandleRemoveWeatherDataFromDatabase);
-//webServer.GetAllUsersEvent += new EventHandler<EventArgs> (HandleReadAllUserDataFromDatabase);
-//webServer.GetAllAdminsEvent += new EventHandler<EventArgs> (HandleReadAllAdminDataFromDatabase);
+webServer.GetAllUsersEvent += new EventHandler<EventArgs> (HandleReadAllUserDataFromDatabase);
+webServer.GetAllAdminsEvent += new EventHandler<EventArgs> (HandleReadAllAdminDataFromDatabase);
 webServer.Main();
 
 /// <summary>

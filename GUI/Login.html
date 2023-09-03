@@ -136,8 +136,23 @@ span.sign-in {
 		float: none;
 	}
 
+
 </style>
+<script>
+	function validate(){
+		if ("Not found") {
+			window.open('login.html')
+		}
+	else(){
+		window.open('User Dashboard.html')
+	}	
+}
+</script>
+
+
 </head>
+
+
 
 
 <!-- Start of displayed content -->
@@ -160,7 +175,7 @@ span.sign-in {
 
 <!-- Login content-->
 <h2 style="text-align: center;">Please enter your login details </h2>
-<form action="http://localhost:80/login" method="post">  <!-- will need to change the .php file name to what we use -->
+<form action="http://localhost:80/login" method="post">  
 	<div class="image-container">
 		<img src="Company Logo.png" alt="Login logo" class="company-logo">
 	</div>
@@ -174,6 +189,9 @@ span.sign-in {
 
 	<button type="submit" onclick="window.open('User Dashboard.html')";>Login</button> <!-- If valid account details are used, this will take the user to the relevant page -->
 </div>
+
+
+
 
 <!-- Options if User cant login -->
 <div class="options-menu" style="background-color: #f1f1f1">

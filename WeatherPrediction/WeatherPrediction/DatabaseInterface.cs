@@ -370,11 +370,6 @@ namespace WeatherPrediction
             }
             sqliteDataReader.Close();
 
-            foreach (string nextValue in userData)
-            {
-                Console.WriteLine("User Data For " + theUserName + " is: " + nextValue);
-            }
-
             return userData;
         }
 

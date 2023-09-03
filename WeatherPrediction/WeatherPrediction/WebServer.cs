@@ -41,6 +41,8 @@ namespace WeatherPrediction
 
         public event EventHandler<EventArgs> GetAllUsersEvent;
 
+        public event EventHandler<EventArgs> GetAllAdminsEvent;
+
         public event EventHandler<Counties> GetWeatherDataEvent;
 
         public event EventHandler<UserData> DeleteUserDataEvent;
@@ -70,7 +72,7 @@ namespace WeatherPrediction
         {
             if (isDone)
             {
-                SendHttpResponse((int)HttpStatusCode.OK);
+                SendHttpResponse((int)HttpStatusCode.OK, "Success");
             }
             else 
             { 
@@ -105,10 +107,14 @@ namespace WeatherPrediction
                     fullUserDataString += FormatUserDataIntoHtmlString(user);
                 }
                 SendHttpResponse((int)(HttpStatusCode.OK), fullUserDataString);
-
+                StoppingCommand();
             }
-            SendNotFoundResponse();
-            StoppingCommand();
+            else
+            {
+                SendNotFoundResponse();
+                StoppingCommand();
+            }
+            
         }
 
         public void DoneCommandWithWeatherData(bool commandSuccessful, List<WeatherData> weatherDataList)
@@ -411,6 +417,7 @@ namespace WeatherPrediction
             StartingCommand(requestTypes.PostSignOut);
             isAdmin = false;
             isAuthenticated = false;
+            SendHttpResponse((int)HttpStatusCode.OK);
             StoppingCommand();
         }
 
@@ -482,8 +489,42 @@ namespace WeatherPrediction
                                 else if (req.Url.AbsolutePath == "/users")
                                 {
                                     StartingCommand(requestTypes.GetWeatherData);
-                                    EventArgs e = new EventArgs(); 
-                                    GetAllUsersEvent?.Invoke(this, e);
+                                    string permissionType = "";
+                                    try
+                                    {
+                                        permissionType = req.QueryString["Users"];
+                                    }
+                                    catch
+                                    {
+                                        SendHttpResponse((int)HttpStatusCode.BadRequest, "No Permission Type");
+                                    }
+
+                                    if (permissionType != "")
+                                    {
+                                        if (permissionType == "Users")
+                                        {
+                                            EventArgs e = new EventArgs();
+                                            GetAllUsersEvent?.Invoke(this, e);
+                                        }
+                                        else if (permissionType == "Admins")
+                                        {
+                                            EventArgs e = new EventArgs();
+                                            GetAllAdminsEvent?.Invoke(this, e);
+                                        }
+                                        else
+                                        {
+                                            SendNotFoundResponse();
+                                            StoppingCommand();
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        SendNotFoundResponse();
+                                        StoppingCommand();
+                                    }
+
+                                    
                                 }
                                 else
                                 {
@@ -505,19 +546,12 @@ namespace WeatherPrediction
                                 {
                                     PostSignOutPath(req);
                                 }
-                                else
-                                {
-                                    SendNotFoundResponse();
-                                }
-                            }
-                            else if (req.HttpMethod == "PUT")
-                            {
-                                if (req.Url.AbsolutePath == "/weather-data")
+                                else if (req.Url.AbsolutePath == "/update-weather-data")
                                 {
                                     StartingCommand(requestTypes.PutWeatherData);
                                     UpdateWeatherDataEvent?.Invoke(this, SeperateHtmlIntoWeatherData(GetRequestData(req)));
                                 }
-                                else if (req.Url.AbsolutePath == "/users")
+                                else if (req.Url.AbsolutePath == "/update-users")
                                 {
                                     StartingCommand(requestTypes.PutWeatherData);
                                     UpdateUserDataEvent?.Invoke(this, SeperateHtmlIntoUserData(GetRequestData(req)));
